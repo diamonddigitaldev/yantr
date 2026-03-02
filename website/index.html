@@ -378,29 +378,14 @@
               A <span class="hero-keyword">lightweight self-hosted App Store</span> that runs <span class="hero-keyword">alongside your existing OS</span> — MacBook, gaming PC, or Linux server. Spin up powerful software instantly, without touching your machine.
             </p>
 
-            <!-- Three pillars -->
-            <div class="flex flex-col gap-2.5 w-full max-w-lg mb-8 animate-fade-in-up delay-300">
-              <div class="hero-pillar group flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 cursor-default hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <span class="text-lg mt-0.5 shrink-0">🫧</span>
-                <div>
-                  <span class="text-xs font-bold uppercase tracking-wider text-gray-900 group-hover:text-black transition-colors">Zero OS Footprint</span>
-                  <p class="text-xs text-gray-500 mt-0.5 leading-relaxed group-hover:text-gray-600 transition-colors">Never touches your host filesystem — everything runs in <span class="font-semibold text-gray-700">isolated Docker containers</span>.</p>
-                </div>
+            <!-- Feature carousel -->
+            <div class="w-full max-w-lg mb-8 animate-fade-in-up delay-300">
+              <!-- Slide window — fixed height so layout doesn't jump -->
+              <div id="hero-fc-window" class="relative overflow-hidden" style="min-height: 112px;">
+                <div id="hero-fc-track" class="flex flex-col gap-2.5 transition-all duration-500 ease-in-out"></div>
               </div>
-              <div class="hero-pillar group flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 cursor-default hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <span class="text-lg mt-0.5 shrink-0">⚡</span>
-                <div>
-                  <span class="text-xs font-bold uppercase tracking-wider text-gray-900 group-hover:text-black transition-colors">No Dependency Hell</span>
-                  <p class="text-xs text-gray-500 mt-0.5 leading-relaxed group-hover:text-gray-600 transition-colors">Run AI models, media servers and databases side by side. <span class="font-semibold text-gray-700">Zero Python, Node, or CUDA conflicts</span>.</p>
-                </div>
-              </div>
-              <div class="hero-pillar group flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 cursor-default hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-                <span class="text-lg mt-0.5 shrink-0">🗑️</span>
-                <div>
-                  <span class="text-xs font-bold uppercase tracking-wider text-gray-900 group-hover:text-black transition-colors">Install, Use, Destroy</span>
-                  <p class="text-xs text-gray-500 mt-0.5 leading-relaxed group-hover:text-gray-600 transition-colors">Delete any app and it's <span class="font-semibold text-gray-700">completely gone</span> — no leftover services, registry keys, or hidden config files.</p>
-                </div>
-              </div>
+              <!-- Dot indicators -->
+              <div id="hero-fc-dots" class="flex items-center gap-1.5 mt-3"></div>
             </div>
 
             <!-- CTAs -->
@@ -1502,6 +1487,89 @@
         loadRandomScreenshot();
         initHeroAnimation();
       });
+
+    // ── Hero Features Carousel ──────────────────────────────────────
+    (function heroFeaturesCarousel() {
+      const features = [
+        { emoji: "🫧", title: "Zero OS Footprint",      desc: "Never touches your host filesystem — everything runs in isolated Docker containers and virtual volumes." },
+        { emoji: "⚡", title: "No Dependency Hell",     desc: "Run AI models, media servers and databases side by side. Zero Python, Node, or CUDA conflicts — ever." },
+        { emoji: "🗑️", title: "Install, Use, Destroy",  desc: "Delete any app and it's completely gone — no leftover services, registry keys, or hidden config files." },
+        { emoji: "🚀", title: "One-Command Deploy",     desc: "A single docker run gets Yantr running in under 30 seconds. Open http://localhost and you're done." },
+        { emoji: "🤖", title: "AI Agent Suite",         desc: "First platform to ship isolated AI agents: Ollama, Open WebUI, Perplexica, OpenCode, and more." },
+        { emoji: "🧬", title: "Cross-Platform",         desc: "Runs identically on Linux, macOS, and Windows (WSL2). Use whatever hardware you already own." },
+        { emoji: "🌍", title: "Remote Access Ready",    desc: "Works seamlessly with Tailscale or Cloudflare Tunnels for secure, zero-config remote access." },
+        { emoji: "🆕", title: "Always Latest Apps",     desc: "Ships the newest app releases by default — no waiting for a platform update to get new versions." },
+        { emoji: "🎛️", title: "On-Demand Resources",    desc: "Nothing runs unless you start it. Only consume RAM and CPU for apps you're actually using." },
+        { emoji: "📦", title: "100% Docker Compose",    desc: "Generates standard Compose files you can take anywhere. No proprietary format or vendor lock-in." },
+      ];
+
+      const PER_SLIDE = 2;
+      const totalSlides = Math.ceil(features.length / PER_SLIDE);
+      let current = 0;
+      let timer;
+
+      const track = document.getElementById("hero-fc-track");
+      const dotsEl = document.getElementById("hero-fc-dots");
+      const window_ = document.getElementById("hero-fc-window");
+      if (!track || !dotsEl) return;
+
+      function renderDots() {
+        dotsEl.innerHTML = "";
+        for (let i = 0; i < totalSlides; i++) {
+          const d = document.createElement("button");
+          d.className = "h-1.5 rounded-full transition-all duration-300 " + (i === current ? "w-5 bg-gray-900" : "w-1.5 bg-gray-300 hover:bg-gray-400");
+          d.setAttribute("aria-label", "Go to slide " + (i + 1));
+          d.addEventListener("click", () => { goTo(i); resetTimer(); });
+          dotsEl.appendChild(d);
+        }
+      }
+
+      function buildCard(f) {
+        return `<div class="hero-pillar group flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 cursor-default hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+          <span class="text-lg mt-0.5 shrink-0">${f.emoji}</span>
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-gray-900 group-hover:text-black transition-colors">${f.title}</span>
+            <p class="text-xs text-gray-500 mt-0.5 leading-relaxed group-hover:text-gray-600 transition-colors">${f.desc}</p>
+          </div>
+        </div>`;
+      }
+
+      function goTo(idx) {
+        current = (idx + totalSlides) % totalSlides;
+        const slice = features.slice(current * PER_SLIDE, current * PER_SLIDE + PER_SLIDE);
+
+        // Fade out
+        track.style.opacity = "0";
+        track.style.transform = "translateY(6px)";
+
+        setTimeout(() => {
+          track.innerHTML = slice.map(buildCard).join("");
+          // Update window min-height to avoid layout jump
+          requestAnimationFrame(() => {
+            track.style.opacity = "1";
+            track.style.transform = "translateY(0)";
+          });
+        }, 250);
+
+        renderDots();
+      }
+
+      function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(() => goTo(current + 1), 3500);
+      }
+
+      // Init styles for transition
+      track.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+
+      // Pause on hover
+      window_.addEventListener("mouseenter", () => clearInterval(timer));
+      window_.addEventListener("mouseleave", resetTimer);
+
+      goTo(0);
+      resetTimer();
+    })();
+
     </script>
   </body>
 </html>

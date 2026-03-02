@@ -7,11 +7,14 @@ const visible = ref(false);
 
 onMounted(async () => {
   try {
-    const res = await fetch("https://ipfs.io/ipns/sponser.yantr.org");
+    const res = await fetch(`https://ipfs.io/ipns/sponser.yantr.org?_=${Math.floor(Date.now() / 3600000)}`, {
+      cache: "no-store",
+    });
     if (!res.ok) return;
     const data = await res.json();
-    if (data?.heading && data?.link?.url && data?.link?.cta) {
-      sponsor.value = data;
+    const entry = data[Math.floor(Math.random() * data.length)];
+    if (entry?.heading && entry?.link?.url && entry?.link?.cta) {
+      sponsor.value = entry;
       // Slight delay so entrance animation is visible
       setTimeout(() => (visible.value = true), 200);
     }

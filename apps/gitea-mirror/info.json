@@ -1,0 +1,33 @@
+{
+  "name": "Gitea Mirror",
+  "logo": "QmVVPpyw3Utk6MbSsmvCJEsEbmcvnBiH6CmM3AjSyzeLCX",
+  "tags": [
+    "git",
+    "backup",
+    "mirror",
+    "gitea",
+    "github",
+    "self-hosted",
+    "developer-tools"
+  ],
+  "ports": [
+    { "port": 4321, "protocol": "HTTP", "label": "Web UI" }
+  ],
+  "short_description": "Automatically mirror GitHub repositories to your self-hosted Gitea or Forgejo instance with a sleek web dashboard.",
+  "description": "Gitea Mirror is a self-hosted tool that automatically synchronizes GitHub repositories — including public, private, and starred repos — to a Gitea or Forgejo instance. It offers a real-time dashboard, scheduled mirroring with configurable intervals, full metadata mirroring (issues, pull requests, labels, milestones, wikis, releases), Git LFS support, and organization mirroring with flexible destination strategies. Authentication supports email/password, SSO/OIDC, and reverse-proxy header auth. Tokens are encrypted at rest with AES-256-GCM. Ideal for keeping an offline or self-hosted backup of your entire GitHub presence.",
+  "usecases": [
+    "Keep a complete backup of all your GitHub repositories on your own Gitea server, updated automatically on a schedule.",
+    "Mirror entire GitHub organizations to Gitea with flexible destination strategies (preserve structure, single org, or flat user).",
+    "Sync issues, pull requests, labels, milestones, and wikis alongside code for a full metadata backup.",
+    "Use as a disaster-recovery solution so your code remains accessible even if GitHub is unavailable."
+  ],
+  "website": "https://giteamirror.com/",
+  "dependencies": [],
+  "notes": [
+    "First user to sign up becomes the admin — secure the instance immediately after first launch",
+    "Set BETTER_AUTH_SECRET to a long random string in production for secure session signing",
+    "Configure GitHub token and Gitea connection through the web UI after starting",
+    "Supports automatic repo discovery and cleanup of repos deleted from GitHub (v3.4.0+)",
+    "Git LFS mirroring requires LFS to be enabled on your Gitea server"
+  ]
+}

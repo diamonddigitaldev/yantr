@@ -37,3 +37,21 @@ Animations should be butter-smooth, intentional, and not overwhelming. Use `tran
 ## 5. Vue & Tailwind Directives
 - **Vue Transitions:** Always wrap changing states (like success messages appearing) in `<transition>` components with smooth ease-in/out classes.
 - **Tailwind Groups:** Rely heavily on Tailwind's `group` and `group-hover:` classes to trigger complex, synchronized animations across multiple child elements when a parent card is hovered.
+
+## 6. App `compose.yml` Conventions
+- **Environment variables** must use map syntax (not list syntax) with the `${VAR_NAME:-default}` pattern for any value a user might want to customize (passwords, usernames, ports, timezones, etc.):
+  ```yaml
+  # CORRECT
+  environment:
+    SUPERUSER: ${SUPERUSER:-admin}
+    SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD:-changeme}
+    TZ: ${TZ:-UTC}
+
+  # WRONG - do not use list syntax or hardcoded values
+  environment:
+    - SUPERUSER=admin
+    - SUPERUSER_PASSWORD=changeme
+  ```
+- **Static/internal values** that are not user-facing (e.g., `PUID`, `PGID`, internal ports) can remain as plain values.
+- **Volumes** must always use named volumes with an explicit `name:` key matching the volume reference.
+- **Labels** must always include `yantr.app` and `yantr.service`.

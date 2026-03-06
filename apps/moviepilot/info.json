@@ -1,0 +1,35 @@
+{
+  "name": "MoviePilot",
+  "logo": "QmYhcfGgTfDj5Eb8srdJMzJBhmnw1ctWpJZgF5efb3aSfb",
+  "tags": [
+    "media",
+    "automation",
+    "downloader",
+    "nas",
+    "self-hosted",
+    "torrent",
+    "sonarr-alternative",
+    "radarr-alternative"
+  ],
+  "ports": [
+    { "port": 3000, "protocol": "HTTP", "label": "Web UI" },
+    { "port": 3001, "protocol": "HTTP", "label": "API" }
+  ],
+  "short_description": "NAS media library automation tool for automatic subscription, downloading, and organization of movies and TV shows.",
+  "description": "MoviePilot is an open-source NAS media library automation management tool built on FastAPI and Vue3. It focuses on core automation needs: subscribing to movies and TV shows, automatically searching and downloading via integrated torrent indexers, renaming and organizing media files, and syncing with media servers like Jellyfin, Plex, and Emby. It features a plugin system for extensibility, supports multiple downloaders (qBittorrent, Transmission, rTorrent), and integrates with Prowlarr/Jackett for indexer management. The frontend and backend are fully separated, making it lightweight and easy to maintain.",
+  "usecases": [
+    "Automatically subscribe to TV shows and download new episodes as they air, then organize them into your media server.",
+    "Search and download movies by title across multiple torrent indexers with a single click.",
+    "Automatically rename and move downloaded media files into a clean library structure compatible with Jellyfin or Plex.",
+    "Manage running download tasks across qBittorrent, Transmission, or rTorrent from a single unified dashboard."
+  ],
+  "website": "https://movie-pilot.org/",
+  "dependencies": [],
+  "notes": [
+    "Default Web UI is on port 3000; API backend listens on port 3001",
+    "Set SUPERUSER and SUPERUSER_PASSWORD environment variables before first launch",
+    "Mount your media directory (e.g., /media) for MoviePilot to organize downloaded files",
+    "Requires a compatible downloader (qBittorrent, Transmission, or rTorrent) configured separately",
+    "For production use, consider using PostgreSQL and Redis instead of the default SQLite database"
+  ]
+}

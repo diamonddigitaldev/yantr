@@ -9,7 +9,7 @@ import { formatDuration, formatBytes } from "../utils/metrics";
 import {
   ArrowLeft, Globe, ExternalLink, Bot, Activity,
   Terminal, Server, Network, Trash2, RefreshCw, HardDrive, FolderOpen, AlertCircle,
-  Eye, EyeOff, Settings2,
+  Eye, EyeOff, Settings2, ChevronRight,
 } from "lucide-vue-next";
 
 const route = useRoute();
@@ -748,7 +748,8 @@ onUnmounted(() => {
           <div
             v-for="svc in stack.services"
             :key="svc.id"
-            class="group bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-zinc-800 rounded-xl p-5 hover:border-gray-300 dark:hover:border-zinc-600 transition-all duration-300"
+            @click="router.push(`/containers/${svc.id}`)"
+            class="group cursor-pointer bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-zinc-800 rounded-xl p-5 hover:border-blue-300 dark:hover:border-blue-500/40 hover:shadow-sm transition-all duration-200"
           >
             <!-- Top row: icon + name/image + uptime -->
             <div class="flex items-start gap-4 mb-5">
@@ -788,15 +789,18 @@ onUnmounted(() => {
                 <div class="font-mono text-[11px] text-gray-500 dark:text-zinc-400 truncate" :title="svc.image">{{ svc.image }}</div>
               </div>
 
-              <!-- Uptime -->
-              <div v-if="formatUptime(svc)" class="text-right shrink-0 hidden sm:block">
-                <div class="text-[9px] uppercase font-bold text-gray-400 dark:text-zinc-500 tracking-wider mb-0.5">{{ t('stackView.uptime') }}</div>
-                <div class="font-mono font-medium text-xs tabular-nums text-gray-700 dark:text-zinc-300">{{ formatUptime(svc) }}</div>
+              <!-- Uptime + nav hint -->
+              <div class="flex items-center gap-2 shrink-0">
+                <div v-if="formatUptime(svc)" class="text-right hidden sm:block">
+                  <div class="text-[9px] uppercase font-bold text-gray-400 dark:text-zinc-500 tracking-wider mb-0.5">{{ t('stackView.uptime') }}</div>
+                  <div class="font-mono font-medium text-xs tabular-nums text-gray-700 dark:text-zinc-300">{{ formatUptime(svc) }}</div>
+                </div>
+                <div v-else-if="svc.state !== 'running'" class="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-600 hidden sm:block self-center">{{ t('stackView.stopped') }}</div>
+                <ChevronRight :size="16" class="text-gray-300 dark:text-zinc-600 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200" />
               </div>
-              <div v-else-if="svc.state !== 'running'" class="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-600 hidden sm:block self-center">{{ t('stackView.stopped') }}</div>
             </div>
 
-            <!-- Bottom row: ports + logs button -->
+            <!-- Bottom row: ports + hover hint -->
             <div class="flex items-center justify-between gap-3 flex-wrap pt-4 border-t border-gray-100 dark:border-zinc-800">
               <!-- Ports -->
               <div class="flex items-center gap-2 flex-wrap">
@@ -825,14 +829,11 @@ onUnmounted(() => {
                 </template>
               </div>
 
-              <!-- Logs button -->
-              <button
-                @click="router.push(`/containers/${svc.id}`)"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700 hover:text-gray-900 dark:hover:text-white transition-all shrink-0"
-              >
-                <Terminal :size="12" />
+              <!-- Hover hint (visible on hover, acts as affordance for mobile too) -->
+              <span class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-blue-500 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0 select-none">
+                <Terminal :size="11" />
                 {{ t('stackView.logs') }}
-              </button>
+              </span>
             </div>
           </div>
         </div>

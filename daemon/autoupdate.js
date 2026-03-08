@@ -39,6 +39,7 @@ async function runWatchtower(containerArgs, label) {
     } else {
       log("warn", `🔄 [${label}] Finished with exit code ${exitCode}: ${stderr.trim()}`);
       return { exitCode, stdout, stderr, updatedCount: 0 };
+    }
   } catch (e) {
     log("error", `🔄 [${label}] Failed: ${e.message}`);
     return { error: e.message };

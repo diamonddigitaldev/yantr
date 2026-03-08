@@ -49,7 +49,11 @@ async function updateStack() {
       toast.error(data.error || t('stackView.updateFailed'));
     }
   } catch (e) {
-    toast.error(t('stackView.updateFailed'));
+    if (e?.message?.includes('timed out') || String(e).toLowerCase().includes('timeout')) {
+      toast.error(t('stackView.updateTimedOut'));
+    } else {
+      toast.error(t('stackView.updateFailed'));
+    }
   } finally {
     updating.value = false;
   }

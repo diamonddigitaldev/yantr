@@ -602,7 +602,8 @@
     "updatingStack": "Récupération des dernières images pour {name}…",
     "updateComplete": "{count} conteneur(s) mis à jour vers la dernière image",
     "updateAlreadyLatest": "Déjà à jour — aucune nouvelle image trouvée",
-    "updateFailed": "Échec de la mise à jour"
+    "updateFailed": "Échec de la mise à jour",
+    "updateTimedOut": "Mise à jour expirée — le téléchargement de l'image a pris trop de temps"
   },
   "appCard": {
     "active": "Actif ({count})",

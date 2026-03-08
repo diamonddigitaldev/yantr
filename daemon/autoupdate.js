@@ -26,7 +26,7 @@ async function runWatchtower(containerArgs, label) {
       "--run-once",
       "--cleanup",
       ...containerArgs,
-    ], { env: { ...process.env, DOCKER_HOST: `unix://${socketPath}`, DOCKER_API_VERSION: "1.44" } });
+    ], { env: { ...process.env, DOCKER_HOST: `unix://${socketPath}`, DOCKER_API_VERSION: "1.44" }, timeout: 10 * 60 * 1000 });
 
     if (exitCode === 0) {
       // Watchtower logs 'msg="Updated <name>"' for each container it actually pulls+restarts.

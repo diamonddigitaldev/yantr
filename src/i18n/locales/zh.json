@@ -602,7 +602,8 @@
     "updatingStack": "正在拉取 {name} 的最新镜像…",
     "updateComplete": "{count} 个容器已更新至最新镜像",
     "updateAlreadyLatest": "已是最新版本 — 未找到新镜像",
-    "updateFailed": "更新失败"
+    "updateFailed": "更新失败",
+    "updateTimedOut": "更新超时 — 镜像拉取耗时过长"
   },
   "appCard": {
     "active": "活动 ({count})",

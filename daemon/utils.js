@@ -8,14 +8,23 @@ import { spawn } from "child_process";
  * @returns {Promise<{stdout: string, stderr: string, exitCode: number}>}
  */
 export function spawnProcess(command, args, options = {}) {
+  const { timeout, ...spawnOptions } = options;
   return new Promise((resolve, reject) => {
     const proc = spawn(command, args, {
-      ...options,
-      env: options.env || process.env,
+      ...spawnOptions,
+      env: spawnOptions.env || process.env,
     });
 
     let stdout = '';
     let stderr = '';
+    let timedOut = false;
+
+    const timer = timeout
+      ? setTimeout(() => {
+          timedOut = true;
+          proc.kill('SIGKILL');
+        }, timeout)
+      : null;
 
     if (proc.stdout) {
       proc.stdout.on('data', (data) => {
@@ -30,10 +39,16 @@ export function spawnProcess(command, args, options = {}) {
     }
 
     proc.on('close', (code) => {
-      resolve({ stdout, stderr, exitCode: code });
+      if (timer) clearTimeout(timer);
+      if (timedOut) {
+        reject(new Error(`Process timed out after ${timeout}ms`));
+      } else {
+        resolve({ stdout, stderr, exitCode: code });
+      }
     });
 
     proc.on('error', (err) => {
+      if (timer) clearTimeout(timer);
       reject(err);
     });
   });

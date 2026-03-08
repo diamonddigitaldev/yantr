@@ -2,8 +2,25 @@ import {
   docker, log, logs, MAX_LOGS, packageJson,
   getPublicIpIdentityCached,
 } from "../shared.js";
+import { runAutoUpdate, runSelfUpdate } from "../autoupdate.js";
 
 export default async function systemRoutes(fastify) {
+
+  // POST /api/autoupdate/run
+  fastify.post("/api/autoupdate/run", async (request, reply) => {
+    const result = await runAutoUpdate();
+    if (result.skipped) return reply.send({ success: false, message: "Update already in progress" });
+    if (result.error) return reply.code(500).send({ success: false, error: result.error });
+    return reply.send({ success: true, exitCode: result.exitCode, output: result.stdout, warnings: result.stderr });
+  });
+
+  // POST /api/autoupdate/self
+  fastify.post("/api/autoupdate/self", async (request, reply) => {
+    const result = await runSelfUpdate();
+    if (result.skipped) return reply.send({ success: false, message: "Self-update already in progress" });
+    if (result.error) return reply.code(500).send({ success: false, error: result.error });
+    return reply.send({ success: true, exitCode: result.exitCode, output: result.stdout, warnings: result.stderr });
+  });
 
   // GET /api/version
   fastify.get("/api/version", (request, reply) => {

@@ -9,6 +9,7 @@ import { resolveComposeCommand } from "./compose.js";
 import { errorHandler } from "./utils.js";
 import { startCleanupScheduler } from "./cleanup.js";
 import { startScheduler } from "./backup-scheduler.js";
+import { startAutoUpdateScheduler } from "./autoupdate.js";
 import { socketPath, log } from "./shared.js";
 import { stopAll as stopAllBrowsers } from "./dufs.js";
 
@@ -133,6 +134,9 @@ try {
   startScheduler(log).catch((err) => {
     log("warn", `⚠️  [BACKUP SCHEDULER] ${err.message}`);
   });
+
+  log("info", "🔄 Starting auto-update scheduler");
+  startAutoUpdateScheduler(log);
 } catch (err) {
   console.error("Failed to start server:", err);
   process.exit(1);

@@ -114,11 +114,12 @@
         letter-spacing: 0.03em;
       }
       .install-tab:hover {
-        color: #d4d4d8;
+        color: #111827;
+        background: rgba(243, 244, 246, 0.9);
       }
       .install-tab-active {
-        color: #f4f4f5;
-        border-bottom-color: #34d399;
+        color: #111827;
+        border-bottom-color: #111827;
       }
       @keyframes slideInSoft {
         from {
@@ -366,6 +367,22 @@
       .rotate-y-180 {
         transform: rotateY(180deg);
       }
+      @keyframes feature-scroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+      .feature-scroll-track {
+        width: max-content;
+        will-change: transform;
+        animation: feature-scroll 48s linear infinite;
+      }
+      .feature-scroll-track:hover {
+        animation-play-state: paused;
+      }
     </style>
   </head>
   <body class="bg-white text-black font-mono antialiased selection:bg-black selection:text-white relative">
@@ -375,10 +392,8 @@
     <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-24 relative bg-white">
       <!-- Hero -->
       <div class="min-h-screen mb-10 sm:mb-12 flex flex-col justify-center relative z-10 py-16 sm:py-20">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-          <!-- LEFT: Text content -->
-          <div class="flex flex-col items-start text-left">
+        <div class="max-w-4xl mx-auto flex flex-col items-center text-center">
+          <div class="flex flex-col items-center text-center">
             <a
               href="./install-docker/"
               class="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 backdrop-blur px-3 py-1.5 mb-6 text-xs font-semibold tracking-wide text-gray-600 uppercase animate-fade-in-up hover:border-gray-400 transition-colors"
@@ -397,22 +412,19 @@
               </span>
             </h1>
             <p class="text-xl sm:text-2xl font-semibold text-gray-400 tracking-tight mb-5 font-sans animate-fade-in-up delay-150">The self-hosted app store for your hardware.</p>
-            <p id="hero-desc" class="text-base text-gray-500 leading-relaxed max-w-lg mb-5 font-sans animate-fade-in-up delay-200">
+            <p id="hero-desc" class="text-base text-gray-500 leading-relaxed max-w-2xl mb-5 font-sans animate-fade-in-up delay-200">
               Browse <span class="hero-keyword">100+ open-source apps</span>. Install with <span class="hero-keyword">one command</span>. No OS replacement, no lock-in — running on your existing machine in under a minute.
             </p>
        
             <!-- Feature carousel -->
-            <div class="w-full max-w-lg mb-8 animate-fade-in-up delay-300">
-              <!-- Slide window — fixed height so layout doesn't jump -->
-              <div id="hero-fc-window" class="relative overflow-hidden" style="min-height: 112px;">
-                <div id="hero-fc-track" class="flex flex-col gap-2.5 transition-all duration-500 ease-in-out"></div>
+            <div class="w-full max-w-5xl mb-8 animate-fade-in-up delay-300">
+              <div id="hero-fc-window" class="relative overflow-hidden py-2">
+                <div id="hero-fc-track" class="feature-scroll-track flex items-stretch gap-4 pr-4"></div>
               </div>
-              <!-- Dot indicators -->
-              <div id="hero-fc-dots" class="flex items-center gap-1.5 mt-3"></div>
             </div>
 
             <!-- CTAs -->
-            <div class="flex flex-wrap items-center gap-3 animate-fade-in-up delay-[400ms]">
+            <div class="flex flex-wrap items-center justify-center gap-3 animate-fade-in-up delay-[400ms]">
               <a
                 href="https://github.com/besoeasy/yantr"
                 target="_blank"
@@ -442,88 +454,26 @@
             </div>
           </div>
 
-          <!-- RIGHT: Terminal install widget -->
-          <div class="animate-fade-in-up delay-200" id="install">
-            <!-- 3-step guide -->
-            <div class="flex items-center justify-between gap-2 mb-3 px-1">
-              <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-[11px] font-bold shrink-0">1</span>
-                <span class="text-xs text-gray-500 font-mono">Install Docker</span>
-              </div>
-              <span class="text-gray-300 text-xs">→</span>
-              <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-[11px] font-bold shrink-0">2</span>
-                <span class="text-xs text-gray-500 font-mono">Run one command</span>
-              </div>
-              <span class="text-gray-300 text-xs">→</span>
-              <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[11px] font-bold shrink-0">3</span>
-                <span class="text-xs text-emerald-600 font-mono font-semibold">Open localhost ✓</span>
-              </div>
+          <div class="w-full max-w-3xl mt-10 animate-fade-in-up delay-200" id="install">
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-5" id="install-tabs">
+              <button data-platform="linux" onclick="switchPlatform('linux')" class="install-tab install-tab-active text-[11px] font-mono px-3 py-2 transition-colors rounded-full border border-gray-200">Linux</button>
+              <button data-platform="macos" onclick="switchPlatform('macos')" class="install-tab text-[11px] font-mono px-3 py-2 transition-colors rounded-full border border-gray-200">macOS</button>
+              <button data-platform="wsl2" onclick="switchPlatform('wsl2')" class="install-tab text-[11px] font-mono px-3 py-2 transition-colors rounded-full border border-gray-200">WSL2</button>
+              <button data-platform="arm" onclick="switchPlatform('arm')" class="install-tab text-[11px] font-mono px-3 py-2 transition-colors rounded-full border border-gray-200">ARM64</button>
             </div>
-            <div class="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden shadow-2xl shadow-black/30">
-              <!-- Terminal chrome -->
-              <div class="border-b border-zinc-800 bg-zinc-900">
-                <div class="flex items-center gap-1.5 px-4 py-2.5">
-                  <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
-                  <span class="w-3 h-3 rounded-full bg-amber-400/80"></span>
-                  <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
-                  <span class="ml-3 text-[11px] text-zinc-500 font-mono tracking-wide">bash — yantr install</span>
-                </div>
-                <!-- Platform tabs -->
-                <div class="flex items-center gap-0 px-4 pb-0 border-t border-zinc-800/60" id="install-tabs">
-                  <button data-platform="linux" onclick="switchPlatform('linux')" class="install-tab install-tab-active text-[11px] font-mono px-3 py-2 transition-colors">Linux</button>
-                  <button data-platform="macos" onclick="switchPlatform('macos')" class="install-tab text-[11px] font-mono px-3 py-2 transition-colors">macOS</button>
-                  <button data-platform="wsl2" onclick="switchPlatform('wsl2')" class="install-tab text-[11px] font-mono px-3 py-2 transition-colors">WSL2</button>
-                  <button data-platform="arm" onclick="switchPlatform('arm')" class="install-tab text-[11px] font-mono px-3 py-2 transition-colors">ARM64</button>
-                </div>
-              </div>
 
-              <!-- Terminal body -->
-              <div class="p-5 space-y-4 font-mono text-sm leading-relaxed">
-                <!-- Command line -->
-                <div>
-                  <div class="flex items-start gap-2 text-zinc-400 text-xs mb-1">
-                    <span class="text-emerald-400 shrink-0">$</span>
-                    <code id="install-cmd" class="text-zinc-200 whitespace-pre-wrap break-all"
-                      >docker run -d --name yantr \
+            <div class="rounded-3xl border border-gray-200 bg-gray-50/80 backdrop-blur px-5 py-6 sm:px-8 sm:py-8 shadow-xl shadow-gray-200/50">
+              <p class="text-[11px] uppercase tracking-[0.24em] text-gray-400 text-center mb-3">Install Yantr with Docker</p>
+              <code id="install-cmd" class="block text-center text-sm sm:text-base text-gray-900 whitespace-pre-wrap break-all leading-relaxed"
+                >docker run -d --name yantr \
   -p 80:5252 -p 443:5252 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /var/lib/docker/volumes:/var/lib/docker/volumes \
   --restart unless-stopped \
   ghcr.io/besoeasy/yantr</code
-                    >
-                  </div>
-                </div>
+              >
 
-                <!-- Simulated output -->
-                <div class="space-y-1 text-xs border-t border-zinc-800 pt-4">
-                  <div class="flex items-center gap-2 text-zinc-500">
-                    <span class="text-blue-400">▶</span>
-                    <span>Pulling <span class="text-zinc-300">ghcr.io/besoeasy/yantr</span>...</span>
-                  </div>
-                  <div class="flex items-center gap-2 text-zinc-500">
-                    <span class="text-emerald-400">✓</span>
-                    <span>Container started · <span class="text-zinc-300">~67 MB RAM</span></span>
-                  </div>
-                  <div class="flex items-center gap-2 text-zinc-500">
-                    <span class="text-emerald-400">✓</span>
-                    <span id="install-platform-ready">Ready at <a href="http://localhost" class="text-emerald-400 underline underline-offset-2 hover:text-emerald-300 transition-colors">http://localhost</a></span>
-                  </div>
-                  <!-- blinking cursor -->
-                  <div class="flex items-center gap-2 pt-1">
-                    <span class="text-emerald-400">$</span>
-                    <span class="inline-block w-2 h-4 bg-emerald-400 animate-pulse rounded-sm"></span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Footer bar -->
-              <div class="flex items-center justify-between px-5 py-3 border-t border-zinc-800 bg-zinc-900/60">
-                <div class="flex items-center gap-3 text-[11px] text-zinc-500">
-                  <span class="flex items-center gap-1"><span class="text-emerald-400">●</span> Docker required</span>
-                  <span id="install-platform-note" class="flex items-center gap-1"><span class="text-blue-400">●</span> Linux · macOS · WSL2 · ARM64</span>
-                </div>
+              <div class="mt-5 flex flex-col items-center gap-3">
                 <button
                   id="copy-install"
                   onclick="
@@ -537,26 +487,26 @@
                         setTimeout(() => b.classList.remove('copied'), 2000);
                       })
                   "
-                  class="flex items-center gap-1.5 text-[11px] text-zinc-400 hover:text-white transition-colors px-2.5 py-1.5 rounded-md hover:bg-white/10 font-mono"
+                  class="flex items-center gap-1.5 text-[11px] text-gray-600 hover:text-black transition-colors px-3 py-2 rounded-full border border-gray-200 hover:border-gray-400 hover:bg-white font-mono"
                   title="Copy command"
                 >
                   <svg class="copy-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                   </svg>
-                  <svg class="check-icon w-3.5 h-3.5 hidden text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg class="check-icon w-3.5 h-3.5 hidden text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                   </svg>
-                  <span class="copy-icon">Copy</span>
-                  <span class="check-icon hidden text-emerald-400">Copied!</span>
+                  <span class="copy-icon">Copy command</span>
+                  <span class="check-icon hidden text-emerald-500">Copied!</span>
                 </button>
+
+                <p id="install-platform-note" class="text-xs text-gray-500 text-center">Ubuntu · Debian · Fedora · Arch</p>
+                <p class="text-xs text-gray-400 text-center">
+                  Don't have Docker?
+                  <a href="./install-docker/" class="underline font-bold hover:text-gray-600 transition-colors">Install guide →</a>
+                </p>
               </div>
             </div>
-
-            <!-- Install guide link -->
-            <p class="mt-3 text-xs text-gray-400 text-center">
-              Don't have Docker?
-              <a href="./install-docker/" class="underline font-bold hover:text-gray-600 transition-colors">Install guide →</a>
-            </p>
           </div>
         </div>
 
@@ -1228,27 +1178,22 @@
       }
 
       // ── Platform tab switching ─────────────────────────────────────
-      const LINK_CLS = 'text-emerald-400 underline underline-offset-2 hover:text-emerald-300 transition-colors';
       const PLATFORMS = {
         linux: {
           label: 'Linux',
           note: 'Ubuntu \u00b7 Debian \u00b7 Fedora \u00b7 Arch',
-          ready: `Ready at <a href="http://localhost" class="${LINK_CLS}">http://localhost</a>`,
         },
         macos: {
           label: 'macOS',
           note: 'Docker Desktop required',
-          ready: `Ready at <a href="http://localhost" class="${LINK_CLS}">http://localhost</a>`,
         },
         wsl2: {
           label: 'Windows \u00b7 WSL2',
           note: 'Run inside WSL2 terminal',
-          ready: `Open <a href="http://localhost" class="${LINK_CLS}">http://localhost</a> in Windows browser`,
         },
         arm: {
           label: 'ARM64 \u00b7 Raspberry Pi',
           note: 'Pi 4 / Pi 5 / Jetson \u00b7 multi-arch image',
-          ready: 'Ready at <span class="text-emerald-400">http://&lt;device-ip&gt;</span>',
         },
       };
 
@@ -1262,13 +1207,9 @@
           btn.classList.toggle('install-tab-active', isActive);
         });
 
-        // Update platform note in footer
+        // Update platform note under install command
         const note = document.getElementById('install-platform-note');
-        if (note) note.innerHTML = `<span class="text-blue-400">\u25cf</span> ${p.note}`;
-
-        // Update the "Ready at" line
-        const readyLine = document.getElementById('install-platform-ready');
-        if (readyLine) readyLine.innerHTML = p.ready;
+        if (note) note.textContent = p.note;
       }
 
       document.addEventListener("DOMContentLoaded", () => {
@@ -1675,7 +1616,7 @@
       });
     }
 
-    // ── Hero Features Carousel ──────────────────────────────────────
+    // ── Hero Features Scroller ──────────────────────────────────────
     (function heroFeaturesCarousel() {
       const features = [
         { emoji: "🫧", title: "Zero OS Footprint",      desc: "Never touches your host filesystem — everything runs in isolated Docker containers and virtual volumes." },
@@ -1690,71 +1631,21 @@
         { emoji: "📦", title: "100% Docker Compose",    desc: "Generates standard Compose files you can take anywhere. No proprietary format or vendor lock-in." },
       ];
 
-      const PER_SLIDE = 2;
-      const totalSlides = Math.ceil(features.length / PER_SLIDE);
-      let current = 0;
-      let timer;
-
       const track = document.getElementById("hero-fc-track");
-      const dotsEl = document.getElementById("hero-fc-dots");
-      const window_ = document.getElementById("hero-fc-window");
-      if (!track || !dotsEl) return;
-
-      function renderDots() {
-        dotsEl.innerHTML = "";
-        for (let i = 0; i < totalSlides; i++) {
-          const d = document.createElement("button");
-          d.className = "h-1.5 rounded-full transition-all duration-300 " + (i === current ? "w-5 bg-gray-900" : "w-1.5 bg-gray-300 hover:bg-gray-400");
-          d.setAttribute("aria-label", "Go to slide " + (i + 1));
-          d.addEventListener("click", () => { goTo(i); resetTimer(); });
-          dotsEl.appendChild(d);
-        }
-      }
+      if (!track) return;
 
       function buildCard(f) {
-        return `<div class="hero-pillar group flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 cursor-default hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
-          <span class="text-lg mt-0.5 shrink-0">${f.emoji}</span>
+        return `<article class="hero-pillar group flex w-[280px] sm:w-[320px] lg:w-[360px] shrink-0 flex-col items-center text-center rounded-2xl border border-gray-200 bg-white px-5 py-5 cursor-default hover:border-gray-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <span class="text-2xl shrink-0 mb-3">${f.emoji}</span>
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-gray-900 group-hover:text-black transition-colors">${f.title}</span>
-            <p class="text-xs text-gray-500 mt-0.5 leading-relaxed group-hover:text-gray-600 transition-colors">${f.desc}</p>
+            <span class="text-xs font-bold uppercase tracking-[0.18em] text-gray-900 group-hover:text-black transition-colors">${f.title}</span>
+            <p class="text-sm text-gray-500 mt-2 leading-relaxed group-hover:text-gray-600 transition-colors">${f.desc}</p>
           </div>
-        </div>`;
+        </article>`;
       }
 
-      function goTo(idx) {
-        current = (idx + totalSlides) % totalSlides;
-        const slice = features.slice(current * PER_SLIDE, current * PER_SLIDE + PER_SLIDE);
-
-        // Fade out
-        track.style.opacity = "0";
-        track.style.transform = "translateY(6px)";
-
-        setTimeout(() => {
-          track.innerHTML = slice.map(buildCard).join("");
-          // Update window min-height to avoid layout jump
-          requestAnimationFrame(() => {
-            track.style.opacity = "1";
-            track.style.transform = "translateY(0)";
-          });
-        }, 250);
-
-        renderDots();
-      }
-
-      function resetTimer() {
-        clearInterval(timer);
-        timer = setInterval(() => goTo(current + 1), 3500);
-      }
-
-      // Init styles for transition
-      track.style.transition = "opacity 0.25s ease, transform 0.25s ease";
-
-      // Pause on hover
-      window_.addEventListener("mouseenter", () => clearInterval(timer));
-      window_.addEventListener("mouseleave", resetTimer);
-
-      goTo(0);
-      resetTimer();
+      const cards = features.map(buildCard).join("");
+      track.innerHTML = cards + cards;
     })();
 
     </script>

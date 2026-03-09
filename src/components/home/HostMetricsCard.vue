@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Cpu, MemoryStick, Server, ShieldCheck } from 'lucide-vue-next'
+import { Cpu, HardDrive, MemoryStick, Server, ShieldCheck } from 'lucide-vue-next'
 import { formatBytes } from '../../utils/metrics'
 
 const { t } = useI18n()
@@ -183,7 +183,8 @@ onUnmounted(() => {
         </div>
 
         <div class="metric-row group/row flex items-center justify-between gap-3 rounded-xl border border-transparent bg-gray-50 dark:bg-zinc-900/60 px-4 py-3 transition-all duration-200 hover:border-gray-200 dark:hover:border-zinc-800 hover:-translate-y-0.5">
-          <div class="min-w-0">
+          <div class="flex items-center gap-3 min-w-0">
+            <HardDrive class="w-4 h-4 text-emerald-500 shrink-0 transition-transform duration-200 group-hover/row:scale-110" />
             <span class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-500 dark:text-zinc-400">{{ t('quickMetrics.hostMetrics.dockerVol') }}</span>
           </div>
           <div class="flex items-baseline gap-2 shrink-0 text-right">

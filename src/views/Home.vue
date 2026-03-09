@@ -22,6 +22,7 @@ import ToolsNavCard from "../components/home/ToolsNavCard.vue";
 import LogsNavCard from "../components/home/LogsNavCard.vue";
 import ExternalLinksCard from "../components/home/ExternalLinksCard.vue";
 import SponsorCard from "../components/home/SponsorCard.vue";
+import OpenCodeCard from "../components/home/OpenCodeCard.vue";
 
 const { apiUrl } = useApiUrl();
 const { currentTime } = useCurrentTime();
@@ -395,6 +396,10 @@ onUnmounted(() => {
             
             <div v-if="showMetrics">
               <ExternalLinksCard />
+            </div>
+
+            <div v-if="activeFilter === 'all'">
+              <OpenCodeCard />
             </div>
 
             <div v-if="activeFilter === 'all'">

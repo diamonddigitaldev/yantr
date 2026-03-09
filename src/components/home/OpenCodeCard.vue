@@ -14,7 +14,7 @@ onMounted(async () => {
     const data = await res.json();
     if (data.success) {
       const container = data.containers.find(
-        (c) => c.Labels?.["yantr.app"] === "opencode-docker" && c.state === "running"
+        (c) => c.Labels?.["yantr.app"] === "opencode-yantr" && c.state === "running"
       );
       if (container) {
         const port = container.ports?.find((p) => p.privatePort === 4096 && p.publicPort);
@@ -30,7 +30,7 @@ function openOpenCode() {
   if (opencodePort.value) {
     window.open(`http://${window.location.hostname}:${opencodePort.value}`, "_blank");
   } else {
-    router.push("/apps/opencode-docker");
+    router.push("/apps/opencode-yantr");
   }
 }
 </script>

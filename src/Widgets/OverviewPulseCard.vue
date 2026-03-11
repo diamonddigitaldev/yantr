@@ -1,16 +1,44 @@
 <script setup>
-import { computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { Layers, Database, Box, HardDrive, Cpu, Zap } from "lucide-vue-next";
+import { useApiUrl } from "../composables/useApiUrl";
 
 const { t } = useI18n();
+const { apiUrl } = useApiUrl();
 
-const props = defineProps({
-  runningApps: { type: Number, default: 0 },
-  totalVolumes: { type: Number, default: 0 },
-  temporaryCount: { type: Number, default: 0 },
-  imagesCount: { type: Number, default: 0 },
+const containers = ref([]);
+const volumes = ref([]);
+const images = ref([]);
+let refreshInterval = null;
+
+async function fetchData() {
+  try {
+    const [cRes, vRes, iRes] = await Promise.all([
+      fetch(`${apiUrl.value}/api/containers`),
+      fetch(`${apiUrl.value}/api/volumes`),
+      fetch(`${apiUrl.value}/api/images`),
+    ]);
+    const [cData, vData, iData] = await Promise.all([cRes.json(), vRes.json(), iRes.json()]);
+    if (cData.success) containers.value = cData.containers;
+    if (vData.success) volumes.value = vData.volumes || [];
+    if (iData.success) images.value = iData.images || [];
+  } catch {}
+}
+
+onMounted(() => {
+  fetchData();
+  refreshInterval = setInterval(fetchData, 15000);
 });
+
+onUnmounted(() => {
+  if (refreshInterval) clearInterval(refreshInterval);
+});
+
+const runningApps = computed(() => containers.value.filter(c => c.state === "running").length);
+const totalVolumes = computed(() => volumes.value.length);
+const imagesCount = computed(() => images.value.length);
+const temporaryCount = computed(() => containers.value.filter(c => c?.labels?.["yantr.expireAt"]).length);
 
 const greeting = computed(() => {
   const hour = new Date().getHours();
@@ -24,28 +52,28 @@ const stats = computed(() => [
   {
     key: "apps",
     label: t("home.overviewPulseCard.apps"),
-    value: props.runningApps,
+    value: runningApps.value,
     icon: Layers,
     color: "text-blue-500",
   },
   {
     key: "volumes",
     label: t("home.overviewPulseCard.volumes"),
-    value: props.totalVolumes,
+    value: totalVolumes.value,
     icon: HardDrive,
     color: "text-violet-500",
   },
   {
     key: "images",
     label: t("home.overviewPulseCard.images"),
-    value: props.imagesCount,
+    value: imagesCount.value,
     icon: Database,
     color: "text-green-500",
   },
   {
     key: "temp",
     label: t("home.overviewPulseCard.temp"),
-    value: props.temporaryCount,
+    value: temporaryCount.value,
     icon: Box,
     color: "text-amber-500",
   },

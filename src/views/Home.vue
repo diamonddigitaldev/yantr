@@ -2,123 +2,27 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Store, LayoutGrid, PackageCheck, Container, FolderOpen, Activity } from "lucide-vue-next";
-import { formatDuration } from "../utils/metrics";
+
+// Auto-load all widget .vue files from src/Widgets/
+const widgetModules = import.meta.glob("../Widgets/*.vue", { eager: true });
+const widgets = Object.values(widgetModules).map((m) => m.default);
 import { useApiUrl } from "../composables/useApiUrl";
-import { useCurrentTime } from "../composables/useCurrentTime";
 import { useI18n } from "vue-i18n";
 import YantraContainersGrid from "../components/home/YantraContainersGrid.vue";
 import VolumeContainersGrid from "../components/home/VolumeContainersGrid.vue";
 import OtherContainersGrid from "../components/home/OtherContainersGrid.vue";
-import SystemCleaner from "../components/SystemCleaner.vue";
-import TailscaleSetupCard from "../components/TailscaleSetupCard.vue";
-import TailscaleStatusCard from "../components/home/TailscaleStatusCard.vue";
-import OverviewPulseCard from "../components/home/OverviewPulseCard.vue";
-import MachineIdentityCard from "../components/home/MachineIdentityCard.vue";
-import AverageUptimeCard from "../components/home/AverageUptimeCard.vue";
-import ExpiringContainersCard from "../components/home/ExpiringContainersCard.vue";
-import HostMetricsCard from "../components/home/HostMetricsCard.vue";
-import BackupStatusCard from "../components/home/BackupStatusCard.vue";
-import ToolsNavCard from "../components/home/ToolsNavCard.vue";
-import LogsNavCard from "../components/home/LogsNavCard.vue";
-import ExternalLinksCard from "../components/home/ExternalLinksCard.vue";
-import SponsorCard from "../components/home/SponsorCard.vue";
-import OpenCodeCard from "../components/home/OpenCodeCard.vue";
-import DailyAppSpotlightCard from "../components/home/DailyAppSpotlightCard.vue";
-import CaddyAuthProxyCard from "../components/home/CaddyAuthProxyCard.vue";
 
 const { apiUrl } = useApiUrl();
-const { currentTime } = useCurrentTime();
 const { t } = useI18n();
 const router = useRouter();
 
-function viewContainerDetail(container) {
-  router.push(`/containers/${container.id}`);
-}
-
 const containers = ref([]);
 const volumes = ref([]);
-const images = ref([]);
-const apps = ref([]);
 const volumeBrowsers = ref([]);
 const loading = ref(false);
-const tailscaleInstalled = ref(false);
 const activeFilter = ref("all");
 
 let containersRefreshInterval = null;
-
-// Metrics computed properties
-const totalApps = computed(() => containers.value.length);
-const runningApps = computed(() => containers.value.filter((c) => c.state === "running").length);
-const totalVolumes = computed(() => volumes.value.length);
-
-const installedAppIds = computed(() => {
-  const ids = new Set(containers.value.map((container) => container?.app?.id).filter(Boolean));
-  return ids;
-});
-
-const runningAppInstanceCounts = computed(() => {
-  const projectsByApp = {};
-  containers.value
-    .filter((container) => container.state === "running")
-    .forEach((container) => {
-      const appId = container?.app?.id;
-      const projectId = container?.app?.projectId;
-      if (!appId || !projectId) return;
-      if (!projectsByApp[appId]) projectsByApp[appId] = new Set();
-      projectsByApp[appId].add(projectId);
-    });
-
-  const counts = {};
-  for (const [appId, projects] of Object.entries(projectsByApp)) {
-    counts[appId] = projects.size;
-  }
-  return counts;
-});
-
-const dailyFeaturedApp = computed(() => {
-  if (apps.value.length === 0) return null;
-
-  const catalog = [...apps.value].sort((left, right) => left.id.localeCompare(right.id));
-  const index = hashString(getDateDaySeed()) % catalog.length;
-  const featuredApp = catalog[index];
-
-  return {
-    ...featuredApp,
-    isInstalled: installedAppIds.value.has(featuredApp.id),
-    instanceCount: runningAppInstanceCounts.value[featuredApp.id] || 0,
-  };
-});
-
-// System Cleaner Visibility
-const reclaimableStats = computed(() => {
-  if (!images.value || !volumes.value) return { show: false, stats: null };
-
-  const unusedImages = images.value.filter((i) => !i.isUsed);
-  const unusedVolumes = volumes.value.filter((v) => !v.isUsed);
-
-  const imageSize = unusedImages.reduce((sum, img) => sum + (img.sizeBytes || 0), 0);
-  const volumeSize = unusedVolumes.reduce((sum, vol) => sum + (vol.sizeBytes || 0), 0);
-
-  const totalReclaimable = imageSize + volumeSize;
-  const threshold = 100 * 1024 * 1024; // 100 MB
-
-  return {
-    show: totalReclaimable > threshold,
-    imageStats: {
-      unusedCount: unusedImages.length,
-      unusedSize: imageSize,
-      totalSize: images.value.reduce((sum, img) => sum + (img.sizeBytes || 0), 0),
-    },
-    volumeStats: {
-      unusedCount: unusedVolumes.length,
-      unusedSize: volumeSize,
-      totalSize: volumes.value.reduce((sum, vol) => sum + (vol.sizeBytes || 0), 0),
-    },
-  };
-});
-
-// Tailscale Visibility
-const showTailscaleSetup = computed(() => !tailscaleInstalled.value);
 
 // Container Grouping
 const volumeContainers = computed(() => volumeBrowsers.value);
@@ -132,7 +36,6 @@ const otherContainers = computed(() => {
 });
 
 const temporaryContainersCount = computed(() =>
-  containers.value.filter((c) => c?.labels?.["yantr.expireAt"]).length +
   volumeBrowsers.value.filter((b) => b.expireAt).length
 );
 
@@ -142,81 +45,12 @@ const showDockerApps = computed(() => activeFilter.value === "all" || activeFilt
 const showVolumeBrowsers = computed(() => activeFilter.value === "all" || activeFilter.value === "volumes");
 const showMetrics = computed(() => activeFilter.value === "all" || activeFilter.value === "metrics");
 
-// Helper function to format time remaining
-function formatTimeRemaining(expireAt) {
-  const expirationTime = parseInt(expireAt, 10) * 1000; // Convert to milliseconds
-  const remaining = expirationTime - currentTime.value;
-
-  if (remaining <= 0) return "Expired";
-
-  const hours = Math.floor(remaining / (1000 * 60 * 60));
-  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-
-  if (hours > 24) {
-    const days = Math.floor(hours / 24);
-    return `${days}d ${hours % 24}h`;
-  } else if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  } else {
-    return `${minutes}m`;
-  }
-}
-
-// Check if container is temporary
-function isTemporary(container) {
-  return container.labels && container.labels["yantr.expireAt"];
-}
-
-// Get expiration info
-function getExpirationInfo(container) {
-  if (!isTemporary(container)) return null;
-
-  const expireAt = container.labels["yantr.expireAt"];
-  return {
-    expireAt,
-    timeRemaining: formatTimeRemaining(expireAt),
-    isExpiringSoon: parseInt(expireAt, 10) * 1000 - currentTime.value < 60 * 60 * 1000, // < 1 hour
-  };
-}
-
-// Format container uptime
-function formatUptime(container) {
-  if (!container.created || container.state !== "running") return null;
-
-  const createdTime = container.created * 1000;
-  const uptime = currentTime.value - createdTime;
-
-  if (uptime <= 0) return "Just started";
-
-  return formatDuration(uptime);
-}
-
-function getDateDaySeed() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function hashString(value) {
-  let hash = 0;
-  for (let index = 0; index < value.length; index += 1) {
-    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
-  }
-  return hash;
-}
-
 async function fetchContainers() {
   try {
     const response = await fetch(`${apiUrl.value}/api/containers`);
     const data = await response.json();
     if (data.success) {
       containers.value = data.containers;
-
-      tailscaleInstalled.value = data.containers.some(
-        (c) => c.name?.toLowerCase().includes("tailscale") || c.Names?.some((name) => name.toLowerCase().includes("tailscale")),
-      );
     }
   } catch (error) {
     console.error("Failed to fetch containers:", error);
@@ -232,18 +66,6 @@ async function fetchVolumes() {
     }
   } catch (error) {
     console.error("Failed to fetch volumes:", error);
-  }
-}
-
-async function fetchApps() {
-  try {
-    const response = await fetch(`${apiUrl.value}/api/apps`);
-    const data = await response.json();
-    if (data.success) {
-      apps.value = Array.isArray(data.apps) ? data.apps : [];
-    }
-  } catch (error) {
-    console.error("Failed to fetch apps:", error);
   }
 }
 
@@ -265,34 +87,13 @@ async function stopBrowser(volumeName) {
   }
 }
 
-async function fetchImages() {
-  try {
-    const response = await fetch(`${apiUrl.value}/api/images`);
-    const data = await response.json();
-    if (data.success) {
-      images.value = data.images || [];
-    }
-  } catch (error) {
-    console.error("Failed to fetch images:", error);
-  }
-}
-
 async function refreshAll() {
-  await Promise.all([fetchContainers(), fetchVolumes(), fetchImages(), fetchVolumeBrowsers()]);
-}
-
-function viewFeaturedApp(app) {
-  if (!app?.id) return;
-  if ((app.instanceCount || 0) > 0) {
-    router.push(`/app/${app.id}`);
-    return;
-  }
-  router.push(`/apps/${app.id}`);
+  await Promise.all([fetchContainers(), fetchVolumes(), fetchVolumeBrowsers()]);
 }
 
 onMounted(async () => {
   loading.value = true;
-  await Promise.all([fetchApps(), refreshAll()]);
+  await refreshAll();
   loading.value = false;
 
   containersRefreshInterval = setInterval(refreshAll, 10000);
@@ -400,61 +201,14 @@ onUnmounted(() => {
               <Store :size="16" />
               <span>{{ t('home.browseAppStore') }}</span>
             </router-link>
-
-            <div v-if="dailyFeaturedApp" class="mt-8 w-full max-w-xl px-4 text-left">
-              <DailyAppSpotlightCard
-                :app="dailyFeaturedApp"
-                :instance-count="dailyFeaturedApp.instanceCount"
-                @select="viewFeaturedApp(dailyFeaturedApp)"
-              />
-            </div>
           </div>
 
           <!-- Unified Dashboard Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-            <!-- Combined Greeting + Operations Pulse -->
-            <div v-if="showMetrics" class="lg:col-span-2">
-              <OverviewPulseCard
-                :running-apps="runningApps"
-                :total-volumes="totalVolumes"
-                :temporary-count="temporaryContainersCount"
-                :images-count="images.length"
-              />
-            </div>
-
-            <div v-if="showMetrics" class="h-full">
-              <HostMetricsCard :api-url="apiUrl" />
-            </div>
-
-            <div v-if="showMetrics">
-              <MachineIdentityCard />
-            </div>
-
-            <!-- Tailscale: setup (2-col) or status card -->
-            <div v-if="showMetrics && showTailscaleSetup" class="sm:col-span-2 h-full">
-              <TailscaleSetupCard />
-            </div>
-            <div v-else-if="showMetrics">
-              <TailscaleStatusCard :containers="containers" :current-time="currentTime" />
-            </div>
-
-            <div v-if="showMetrics">
-              <BackupStatusCard />
-            </div>
-
-            <!-- Caddy Auth Proxy quick-deploy -->
-            <div v-if="showMetrics" class="sm:col-span-2 lg:col-span-1 h-full">
-              <CaddyAuthProxyCard :containers="containers" />
-            </div>
-
             <YantraContainersGrid
               v-if="showYantrApps && yantrContainers.length > 0"
               :containers="yantrContainers"
             />
-
-            <div v-if="showMetrics">
-              <AverageUptimeCard :containers="containers" :current-time="currentTime" />
-            </div>
 
             <VolumeContainersGrid
               v-if="showVolumeBrowsers && volumeContainers.length > 0"
@@ -464,46 +218,12 @@ onUnmounted(() => {
 
             <OtherContainersGrid v-if="showDockerApps && otherContainers.length > 0" :containers="otherContainers" @select="viewContainerDetail" />
 
-            <div v-if="showMetrics && reclaimableStats.show" class="h-full lg:col-span-2 xl:col-span-2">
-              <SystemCleaner
-                :api-url="apiUrl"
-                :initial-image-stats="reclaimableStats.imageStats"
-                :initial-volume-stats="reclaimableStats.volumeStats"
-                @cleaned="refreshAll"
-              />
-            </div>
-
-            <div v-if="showMetrics && temporaryContainersCount > 0">
-              <ExpiringContainersCard :containers="containers" :current-time="currentTime" />
-            </div>
-
-            <div v-if="showMetrics">
-              <ToolsNavCard />
-            </div>
-
-            <div v-if="showMetrics">
-              <LogsNavCard />
-            </div>
-
-            <div v-if="activeFilter === 'all' && dailyFeaturedApp" class="sm:col-span-2 lg:col-span-1 xl:col-span-2">
-              <DailyAppSpotlightCard
-                :app="dailyFeaturedApp"
-                :instance-count="dailyFeaturedApp.instanceCount"
-                @select="viewFeaturedApp(dailyFeaturedApp)"
-              />
-            </div>
-            
-            <div v-if="showMetrics">
-              <ExternalLinksCard />
-            </div>
-
-            <div v-if="showMetrics">
-              <OpenCodeCard />
-            </div>
-
-            <div v-if="showMetrics">
-              <SponsorCard />
-            </div>
+            <!-- Dynamic Widgets from src/Widgets/ -->
+            <template v-if="showMetrics">
+              <div v-for="(widget, i) in widgets" :key="i">
+                <component :is="widget" />
+              </div>
+            </template>
           </div>
         </div>
       </div>

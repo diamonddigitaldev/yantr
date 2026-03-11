@@ -2,12 +2,11 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Cpu, HardDrive, MemoryStick, Server, ShieldCheck } from 'lucide-vue-next'
-import { formatBytes } from '../../utils/metrics'
+import { formatBytes } from '../utils/metrics'
+import { useApiUrl } from '../composables/useApiUrl'
 
 const { t } = useI18n()
-const props = defineProps({
-  apiUrl: { type: String, required: true }
-})
+const { apiUrl } = useApiUrl()
 
 const systemInfo = ref(null)
 const loading = ref(true)
@@ -87,7 +86,7 @@ watch(systemInfo, (info) => {
 
 async function fetchSystemInfo() {
   try {
-    const response = await fetch(`${props.apiUrl}/api/system/info`)
+    const response = await fetch(`${apiUrl.value}/api/system/info`)
     const data = await response.json()
     if (data.success) {
       systemInfo.value = data.info

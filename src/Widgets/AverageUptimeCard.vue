@@ -1,17 +1,37 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Clock, Activity, Zap } from 'lucide-vue-next'
-import { formatDuration } from '../../utils/metrics'
+import { formatDuration } from '../utils/metrics'
+import { useApiUrl } from '../composables/useApiUrl'
+import { useCurrentTime } from '../composables/useCurrentTime'
 
 const { t } = useI18n()
-const props = defineProps({
-  containers: { type: Array, default: () => [] },
-  currentTime: { type: Number, default: () => Date.now() }
+const { apiUrl } = useApiUrl()
+const { currentTime } = useCurrentTime()
+
+const containers = ref([])
+let refreshInterval = null
+
+async function fetchContainers() {
+  try {
+    const response = await fetch(`${apiUrl.value}/api/containers`)
+    const data = await response.json()
+    if (data.success) containers.value = data.containers
+  } catch {}
+}
+
+onMounted(() => {
+  fetchContainers()
+  refreshInterval = setInterval(fetchContainers, 15000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval) clearInterval(refreshInterval)
 })
 
 const stats = computed(() => {
-  const runningContainers = props.containers.filter(c => c.state === 'running' && c.created)
+  const runningContainers = containers.value.filter(c => c.state === 'running' && c.created)
   const count = runningContainers.length
 
   if (count === 0) {
@@ -20,7 +40,7 @@ const stats = computed(() => {
 
   const totalUptime = runningContainers.reduce((sum, container) => {
     const createdTime = container.created * 1000
-    const uptime = props.currentTime - createdTime
+    const uptime = currentTime.value - createdTime
     return sum + uptime
   }, 0)
 

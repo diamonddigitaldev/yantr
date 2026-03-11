@@ -1,31 +1,101 @@
 <script setup>
-import { computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { ArrowRight, Bot, Layers, Sparkles } from "lucide-vue-next";
+import { useApiUrl } from "../composables/useApiUrl";
 
 const { t } = useI18n();
+const router = useRouter();
+const { apiUrl } = useApiUrl();
 
-const props = defineProps({
-  app: {
-    type: Object,
-    required: true,
-  },
-  instanceCount: {
-    type: Number,
-    default: 0,
-  },
+const apps = ref([]);
+const containers = ref([]);
+
+function getDateDaySeed() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function hashString(value) {
+  let hash = 0;
+  for (let i = 0; i < value.length; i++) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+const installedAppIds = computed(() => {
+  return new Set(containers.value.map((c) => c?.app?.id).filter(Boolean));
 });
 
-const emit = defineEmits(["select"]);
+const runningAppInstanceCounts = computed(() => {
+  const projectsByApp = {};
+  containers.value
+    .filter((c) => c.state === "running")
+    .forEach((c) => {
+      const appId = c?.app?.id;
+      const projectId = c?.app?.projectId;
+      if (!appId || !projectId) return;
+      if (!projectsByApp[appId]) projectsByApp[appId] = new Set();
+      projectsByApp[appId].add(projectId);
+    });
+  const counts = {};
+  for (const [appId, projects] of Object.entries(projectsByApp)) {
+    counts[appId] = projects.size;
+  }
+  return counts;
+});
+
+const dailyApp = computed(() => {
+  if (apps.value.length === 0) return null;
+  const catalog = [...apps.value].sort((a, b) => a.id.localeCompare(b.id));
+  const index = hashString(getDateDaySeed()) % catalog.length;
+  const featured = catalog[index];
+  return {
+    ...featured,
+    isInstalled: installedAppIds.value.has(featured.id),
+    instanceCount: runningAppInstanceCounts.value[featured.id] || 0,
+  };
+});
+
+async function fetchData() {
+  try {
+    const [appsRes, containersRes] = await Promise.all([
+      fetch(`${apiUrl.value}/api/apps`),
+      fetch(`${apiUrl.value}/api/containers`),
+    ]);
+    const appsData = await appsRes.json();
+    const containersData = await containersRes.json();
+    if (appsData.success) apps.value = Array.isArray(appsData.apps) ? appsData.apps : [];
+    if (containersData.success) containers.value = containersData.containers;
+  } catch {}
+}
+
+function handleSelect() {
+  if (!dailyApp.value?.id) return;
+  if ((dailyApp.value.instanceCount || 0) > 0) {
+    router.push(`/app/${dailyApp.value.id}`);
+  } else {
+    router.push(`/apps/${dailyApp.value.id}`);
+  }
+}
+
+onMounted(fetchData);
+
+const instanceCount = computed(() => dailyApp.value?.instanceCount ?? 0);
 
 const appState = computed(() => {
-  if (props.instanceCount > 0) return "running";
-  if (props.app?.isInstalled) return "installed";
+  if (instanceCount.value > 0) return "running";
+  if (dailyApp.value?.isInstalled) return "installed";
   return "available";
 });
 
 const primaryTag = computed(() => {
-  const tags = props.app?.tags;
+  const tags = dailyApp.value?.tags;
   if (!Array.isArray(tags) || tags.length === 0) return null;
   return tags[0];
 });
@@ -36,7 +106,7 @@ const actionLabel = computed(() => {
 });
 
 const stateLabel = computed(() => {
-  if (appState.value === "running") return t("home.dailyAppCard.running", { count: props.instanceCount });
+  if (appState.value === "running") return t("home.dailyAppCard.running", { count: instanceCount.value });
   if (appState.value === "installed") return t("home.dailyAppCard.installed");
   return t("home.dailyAppCard.available");
 });
@@ -44,8 +114,9 @@ const stateLabel = computed(() => {
 
 <template>
   <button
+    v-if="dailyApp"
     type="button"
-    @click="emit('select')"
+    @click="handleSelect"
     class="relative group h-full w-full flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-[#0A0A0A] text-left transition-all duration-400 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-2xl hover:shadow-black/5 dark:hover:border-zinc-600 dark:hover:shadow-black/40"
   >
     <div class="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-transparent via-amber-500 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
@@ -59,7 +130,7 @@ const stateLabel = computed(() => {
             <span>{{ t("home.dailyAppCard.featuredToday") }}</span>
           </div>
           <h3 class="mt-4 text-xl font-semibold tracking-tight text-gray-900 transition-colors group-hover:text-amber-600 dark:text-white dark:group-hover:text-amber-300">
-            {{ app?.name }}
+            {{ dailyApp?.name }}
           </h3>
           <p class="mt-1 text-[11px] font-medium uppercase tracking-[0.18em] text-gray-400 dark:text-zinc-500">
             {{ t("home.dailyAppCard.subtitle") }}
@@ -68,9 +139,9 @@ const stateLabel = computed(() => {
 
         <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-gray-100 bg-gray-50 p-3 dark:border-zinc-800 dark:bg-zinc-900">
           <img
-            v-if="app?.logo"
-            :src="app.logo"
-            :alt="app.name"
+            v-if="dailyApp?.logo"
+            :src="dailyApp.logo"
+            :alt="dailyApp.name"
             class="h-full w-full object-contain"
             loading="lazy"
           />
@@ -79,7 +150,7 @@ const stateLabel = computed(() => {
       </div>
 
       <p class="text-sm font-medium leading-relaxed text-gray-500 dark:text-zinc-400 line-clamp-3">
-        {{ app?.description || t("home.dailyAppCard.noDescription") }}
+        {{ dailyApp?.description || t("home.dailyAppCard.noDescription") }}
       </p>
 
       <div class="mt-5 flex flex-wrap gap-2">

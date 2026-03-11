@@ -1,21 +1,41 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Timer, Hourglass, Zap } from 'lucide-vue-next'
-import { formatDuration } from '../../utils/metrics.js'
+import { formatDuration } from '../utils/metrics.js'
+import { useApiUrl } from '../composables/useApiUrl'
+import { useCurrentTime } from '../composables/useCurrentTime'
 
 const { t } = useI18n()
-const props = defineProps({
-  containers: { type: Array, default: () => [] },
-  currentTime: { type: Number, default: () => Date.now() }
+const { apiUrl } = useApiUrl()
+const { currentTime } = useCurrentTime()
+
+const containers = ref([])
+let refreshInterval = null
+
+async function fetchContainers() {
+  try {
+    const response = await fetch(`${apiUrl.value}/api/containers`)
+    const data = await response.json()
+    if (data.success) containers.value = data.containers
+  } catch {}
+}
+
+onMounted(() => {
+  fetchContainers()
+  refreshInterval = setInterval(fetchContainers, 15000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval) clearInterval(refreshInterval)
 })
 
 const stats = computed(() => {
-  const tempContainers = props.containers
+  const tempContainers = containers.value
     .filter(c => c?.labels && c.labels['yantr.expireAt'])
     .map(c => {
       const expireAt = parseInt(c.labels['yantr.expireAt'], 10) * 1000
-      const remainingMs = expireAt - props.currentTime
+      const remainingMs = expireAt - currentTime.value
       return {
         id: c.id,
         name: c?.app?.name || c?.name || 'Unknown',

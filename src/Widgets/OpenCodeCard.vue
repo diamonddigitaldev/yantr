@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { Bot, ChevronRight } from "lucide-vue-next";
-import { useApiUrl } from "../../composables/useApiUrl";
+import { useApiUrl } from "../composables/useApiUrl";
 
 const router = useRouter();
 const { apiUrl } = useApiUrl();

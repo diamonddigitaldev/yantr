@@ -1,16 +1,37 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Wifi, WifiOff, Shield, Lock, Globe } from 'lucide-vue-next'
+import { useApiUrl } from '../composables/useApiUrl'
+import { useCurrentTime } from '../composables/useCurrentTime'
+import TailscaleSetupCard from './TailscaleSetupCard.vue'
 
 const { t } = useI18n()
-const props = defineProps({
-  containers: { type: Array, default: () => [] },
-  currentTime: { type: Number, default: () => Date.now() },
+const { apiUrl } = useApiUrl()
+const { currentTime } = useCurrentTime()
+
+const containers = ref([])
+let refreshInterval = null
+
+async function fetchContainers() {
+  try {
+    const response = await fetch(`${apiUrl.value}/api/containers`)
+    const data = await response.json()
+    if (data.success) containers.value = data.containers
+  } catch {}
+}
+
+onMounted(() => {
+  fetchContainers()
+  refreshInterval = setInterval(fetchContainers, 15000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval) clearInterval(refreshInterval)
 })
 
 const tailscaleContainer = computed(() => {
-  const list = Array.isArray(props.containers) ? props.containers : []
+  const list = Array.isArray(containers.value) ? containers.value : []
   const matches = list.filter((c) => {
     const name = (c?.name || '').toLowerCase()
     const names = Array.isArray(c?.Names) ? c.Names : []
@@ -27,7 +48,7 @@ const uptimeMs = computed(() => {
   if (!c || c.state !== 'running' || !c.created) return null
   const createdMs = Number(c.created) * 1000
   if (!Number.isFinite(createdMs)) return null
-  return Math.max(0, props.currentTime - createdMs)
+  return Math.max(0, currentTime.value - createdMs)
 })
 
 const imageVersion = computed(() => {
@@ -70,7 +91,8 @@ function formatUptime(ms) {
 </script>
 
 <template>
-  <div class="relative group h-full flex flex-col bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-zinc-800 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-black/5 dark:hover:shadow-black/40 hover:border-gray-300 dark:hover:border-zinc-600">
+  <TailscaleSetupCard v-if="!tailscaleContainer" />
+  <div v-else class="relative group h-full flex flex-col bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-zinc-800 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-black/5 dark:hover:shadow-black/40 hover:border-gray-300 dark:hover:border-zinc-600">
     <div
       class="absolute top-0 left-0 w-full h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
       :class="isRunning

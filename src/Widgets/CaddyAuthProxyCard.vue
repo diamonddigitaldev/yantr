@@ -1,12 +1,28 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Shield, Lock, Eye, EyeOff, CheckCircle, Loader, ChevronDown, User } from 'lucide-vue-next'
-import { useApiUrl } from '../../composables/useApiUrl'
+import { useApiUrl } from '../composables/useApiUrl'
 
 const { apiUrl } = useApiUrl()
 
-const props = defineProps({
-  containers: { type: Array, default: () => [] },
+const containers = ref([])
+let refreshInterval = null
+
+async function fetchContainers() {
+  try {
+    const response = await fetch(`${apiUrl.value}/api/containers`)
+    const data = await response.json()
+    if (data.success) containers.value = data.containers
+  } catch {}
+}
+
+onMounted(() => {
+  fetchContainers()
+  refreshInterval = setInterval(fetchContainers, 15000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval) clearInterval(refreshInterval)
 })
 
 const selectedPort = ref('')
@@ -21,7 +37,7 @@ const deploySuccess = ref(false)
 // Running containers with exposed TCP host ports
 const portOptions = computed(() => {
   const result = []
-  for (const c of props.containers) {
+  for (const c of containers.value) {
     if (c.state !== 'running') continue
     const ports = Array.isArray(c.ports) ? c.ports : []
     for (const p of ports) {
@@ -37,7 +53,7 @@ const portOptions = computed(() => {
 })
 
 const caddyRunning = computed(() =>
-  props.containers.some(c => c.appLabels?.app === 'caddy-yantr' && c.state === 'running'),
+  containers.value.some(c => c.appLabels?.app === 'caddy-yantr' && c.state === 'running'),
 )
 
 const canDeploy = computed(() =>

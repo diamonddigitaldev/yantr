@@ -1,6 +1,6 @@
 <script setup>
 import { useI18n } from "vue-i18n";
-import { useCurrentTime } from "../../composables/useCurrentTime";
+import { useCurrentTime } from "../composables/useCurrentTime";
 import { FolderOpen, ExternalLink, EyeOff } from "lucide-vue-next";
 
 const { t } = useI18n();

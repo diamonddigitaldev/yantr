@@ -8,9 +8,9 @@ const widgetModules = import.meta.glob("../Widgets/*.vue", { eager: true });
 const widgets = Object.values(widgetModules).map((m) => m.default);
 import { useApiUrl } from "../composables/useApiUrl";
 import { useI18n } from "vue-i18n";
-import YantraContainersGrid from "../components/home/YantraContainersGrid.vue";
-import VolumeContainersGrid from "../components/home/VolumeContainersGrid.vue";
-import OtherContainersGrid from "../components/home/OtherContainersGrid.vue";
+import YantraContainersGrid from "../components/YantraContainersGrid.vue";
+import VolumeContainersGrid from "../components/VolumeContainersGrid.vue";
+import OtherContainersGrid from "../components/OtherContainersGrid.vue";
 
 const { apiUrl } = useApiUrl();
 const { t } = useI18n();
@@ -35,9 +35,7 @@ const otherContainers = computed(() => {
   return containers.value.filter((c) => !c.appLabels?.app);
 });
 
-const temporaryContainersCount = computed(() =>
-  volumeBrowsers.value.filter((b) => b.expireAt).length
-);
+const temporaryContainersCount = computed(() => volumeBrowsers.value.filter((b) => b.expireAt).length);
 
 // Filter visibility computed properties
 const showYantrApps = computed(() => activeFilter.value === "all" || activeFilter.value === "yantr");
@@ -80,10 +78,10 @@ async function fetchVolumeBrowsers() {
 
 async function stopBrowser(volumeName) {
   try {
-    await fetch(`${apiUrl.value}/api/volumes/${volumeName}/browse`, { method: 'DELETE' });
+    await fetch(`${apiUrl.value}/api/volumes/${volumeName}/browse`, { method: "DELETE" });
     await fetchVolumeBrowsers();
   } catch (error) {
-    console.error('Failed to stop browser:', error);
+    console.error("Failed to stop browser:", error);
   }
 }
 
@@ -115,7 +113,7 @@ onUnmounted(() => {
         <!-- Loading State -->
         <div v-if="loading" class="flex flex-col items-center justify-center py-32">
           <div class="w-8 h-8 border-2 border-gray-200 dark:border-zinc-800 border-t-blue-500 rounded-full animate-spin mb-4"></div>
-          <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-zinc-500 animate-pulse">{{ t('home.syncing') }}</div>
+          <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 dark:text-zinc-500 animate-pulse">{{ t("home.syncing") }}</div>
         </div>
 
         <!-- Content -->
@@ -132,7 +130,7 @@ onUnmounted(() => {
               ]"
             >
               <LayoutGrid :size="14" />
-              <span>{{ t('home.all') }}</span>
+              <span>{{ t("home.all") }}</span>
             </button>
             <button
               v-if="yantrContainers.length > 0"
@@ -145,7 +143,7 @@ onUnmounted(() => {
               ]"
             >
               <PackageCheck :size="14" />
-              <span>{{ t('home.yantrApps') }}</span>
+              <span>{{ t("home.yantrApps") }}</span>
             </button>
             <button
               v-if="otherContainers.length > 0"
@@ -158,7 +156,7 @@ onUnmounted(() => {
               ]"
             >
               <Container :size="14" />
-              <span>{{ t('home.dockerApps') }}</span>
+              <span>{{ t("home.dockerApps") }}</span>
             </button>
             <button
               v-if="volumeContainers.length > 0"
@@ -171,7 +169,7 @@ onUnmounted(() => {
               ]"
             >
               <FolderOpen :size="14" />
-              <span>{{ t('home.volumeBrowsers') }}</span>
+              <span>{{ t("home.volumeBrowsers") }}</span>
             </button>
             <button
               @click="activeFilter = 'metrics'"
@@ -183,38 +181,34 @@ onUnmounted(() => {
               ]"
             >
               <Activity :size="14" />
-              <span>{{ t('home.metrics') }}</span>
+              <span>{{ t("home.metrics") }}</span>
             </button>
           </div>
 
           <!-- Empty State -->
-          <div v-if="containers.length === 0" class="text-center py-32 bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-zinc-800 rounded-xl mb-6 flex flex-col items-center">
+          <div
+            v-if="containers.length === 0"
+            class="text-center py-32 bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-zinc-800 rounded-xl mb-6 flex flex-col items-center"
+          >
             <div class="w-20 h-20 bg-gray-50 dark:bg-zinc-900/50 border border-gray-200 dark:border-zinc-800 rounded-2xl flex items-center justify-center mb-6">
               <Store :size="32" class="text-gray-400 dark:text-zinc-500" />
             </div>
-            <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">{{ t('home.noAppsRunning') }}</h3>
-            <p class="text-sm font-medium text-gray-500 dark:text-zinc-400 max-w-md mx-auto mb-8">{{ t('home.dashboardEmpty') }}</p>
+            <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">{{ t("home.noAppsRunning") }}</h3>
+            <p class="text-sm font-medium text-gray-500 dark:text-zinc-400 max-w-md mx-auto mb-8">{{ t("home.dashboardEmpty") }}</p>
             <router-link
               to="/apps"
               class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 rounded-lg text-xs font-bold uppercase tracking-wider transition-all hover:-translate-y-0.5 shadow-sm"
             >
               <Store :size="16" />
-              <span>{{ t('home.browseAppStore') }}</span>
+              <span>{{ t("home.browseAppStore") }}</span>
             </router-link>
           </div>
 
           <!-- Unified Dashboard Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-            <YantraContainersGrid
-              v-if="showYantrApps && yantrContainers.length > 0"
-              :containers="yantrContainers"
-            />
+            <YantraContainersGrid v-if="showYantrApps && yantrContainers.length > 0" :containers="yantrContainers" />
 
-            <VolumeContainersGrid
-              v-if="showVolumeBrowsers && volumeContainers.length > 0"
-              :containers="volumeContainers"
-              @stop-browser="stopBrowser"
-            />
+            <VolumeContainersGrid v-if="showVolumeBrowsers && volumeContainers.length > 0" :containers="volumeContainers" @stop-browser="stopBrowser" />
 
             <OtherContainersGrid v-if="showDockerApps && otherContainers.length > 0" :containers="otherContainers" @select="viewContainerDetail" />
 

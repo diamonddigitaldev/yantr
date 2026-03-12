@@ -11,21 +11,21 @@ const props = defineProps({
 
 const router = useRouter();
 
-// Group individual containers into app stacks by app.id
+// Group containers into stacks by projectId
 const appGroups = computed(() => {
   const map = new Map();
   for (const c of props.containers) {
-    const appId = c.app?.id;
-    if (!appId) continue;
-    if (!map.has(appId)) {
-      map.set(appId, {
-        appId,
-        name: c.app?.name || appId,
+    const projectId = c.app?.projectId || c.id;
+    if (!map.has(projectId)) {
+      map.set(projectId, {
+        projectId,
+        appId: c.app?.id,
+        name: c.app?.name || projectId,
         logo: c.app?.logo || null,
         containers: [],
       });
     }
-    map.get(appId).containers.push(c);
+    map.get(projectId).containers.push(c);
   }
   return [...map.values()];
 });
@@ -42,7 +42,7 @@ function hasTemporary(group) {
 }
 
 function navigate(group) {
-  router.push(`/app/${group.appId}`);
+  router.push(`/stacks/${group.projectId}`);
 }
 </script>
 
@@ -50,7 +50,7 @@ function navigate(group) {
   <div style="display: contents">
     <div
       v-for="(group, index) in appGroups"
-      :key="group.appId"
+      :key="group.projectId"
       :style="{ animationDelay: `${index * 50}ms` }"
       @click="navigate(group)"
       @keydown.enter.prevent="navigate(group)"

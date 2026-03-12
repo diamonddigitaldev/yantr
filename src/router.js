@@ -1,74 +1,68 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      redirect: '/home'
+      path: "/",
+      redirect: "/home",
     },
     {
-      path: '/home',
-      name: 'home',
-      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue')
+      path: "/home",
+      name: "home",
+      component: () => import(/* webpackChunkName: "home" */ "./views/Home.vue"),
     },
     {
-      path: '/apps',
-      name: 'apps',
-      component: () => import(/* webpackChunkName: "apps" */ './views/Apps.vue')
+      path: "/apps",
+      name: "apps",
+      component: () => import(/* webpackChunkName: "apps" */ "./views/Apps.vue"),
     },
     {
-      path: '/apps/:appname',
-      name: 'app-install',
-      component: () => import(/* webpackChunkName: "app-install" */ './views/AppDetail.vue')
-    },
-  
-    {
-      path: '/app/:appId',
-      name: 'app-instances',
-      component: () => import(/* webpackChunkName: "app-instances" */ './views/AppOverview.vue')
+      path: "/apps/:appname",
+      name: "app-install",
+      component: () => import(/* webpackChunkName: "app-install" */ "./views/AppDetail.vue"),
     },
     {
-      path: '/containers/:id',
-      name: 'container-inspect',
-      component: () => import(/* webpackChunkName: "container-inspect" */ './views/ContainerDetail.vue')
+      path: "/containers/:id",
+      name: "container-inspect",
+      component: () => import(/* webpackChunkName: "container-inspect" */ "./views/ContainerDetail.vue"),
     },
     {
-      path: '/stacks/:projectId',
-      name: 'stack-detail',
-      component: () => import(/* webpackChunkName: "stack-detail" */ './views/StackView.vue')
+      path: "/stacks/:projectId",
+      name: "stack-detail",
+      component: () => import(/* webpackChunkName: "stack-detail" */ "./views/StackView.vue"),
     },
     {
-      path: '/images',
-      name: 'images',
-      component: () => import(/* webpackChunkName: "images" */ './views/Images.vue')
+      path: "/images",
+      name: "images",
+      component: () => import(/* webpackChunkName: "images" */ "./views/Images.vue"),
     },
     {
-      path: '/volumes',
-      name: 'volumes',
-      component: () => import(/* webpackChunkName: "volumes" */ './views/Volumes.vue')
+      path: "/volumes",
+      name: "volumes",
+      component: () => import(/* webpackChunkName: "volumes" */ "./views/Volumes.vue"),
     },
     {
-      path: '/backup-config',
-      name: 'backup-config',
-      component: () => import(/* webpackChunkName: "backup-config" */ './views/BackupConfig.vue')
+      path: "/backup-config",
+      name: "backup-config",
+      component: () => import(/* webpackChunkName: "backup-config" */ "./views/BackupConfig.vue"),
     },
     {
-      path: '/backup-schedules',
-      name: 'backup-schedules',
-      component: () => import(/* webpackChunkName: "backup-schedules" */ './views/BackupSchedules.vue')
+      path: "/backup-schedules",
+      name: "backup-schedules",
+      component: () => import(/* webpackChunkName: "backup-schedules" */ "./views/BackupSchedules.vue"),
     },
     {
-      path: '/backup-volumes',
-      name: 'backup-volumes',
-      component: () => import(/* webpackChunkName: "backup-volumes" */ './views/BackupVolumes.vue')
+      path: "/backup-volumes",
+      name: "backup-volumes",
+      component: () => import(/* webpackChunkName: "backup-volumes" */ "./views/BackupVolumes.vue"),
     },
     {
-      path: '/logs',
-      name: 'logs',
-      component: () => import(/* webpackChunkName: "logs" */ './views/Logs.vue')
-    }
-  ]
-})
+      path: "/logs",
+      name: "logs",
+      component: () => import(/* webpackChunkName: "logs" */ "./views/Logs.vue"),
+    },
+  ],
+});
 
-export default router
+export default router;

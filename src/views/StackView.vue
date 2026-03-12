@@ -9,7 +9,7 @@ import { formatDuration, formatBytes } from "../utils/metrics";
 import {
   ArrowLeft, Globe, ExternalLink, Bot, Activity,
   Terminal, Server, Network, Trash2, RefreshCw, HardDrive, FolderOpen, AlertCircle,
-  Eye, EyeOff, Settings2, ChevronRight, RotateCcw,
+  Eye, EyeOff, Settings2, ChevronRight, RotateCcw, Plus,
 } from "lucide-vue-next";
 
 const route = useRoute();
@@ -25,6 +25,8 @@ const stack = ref(null);
 const loading = ref(true);
 const removing = ref(false);
 const updating = ref(false);
+const openingPort = ref(false);
+const newPort = ref({ serviceName: "", mapping: "" });
 
 async function updateStack() {
   if (updating.value || !stack.value) return;
@@ -134,6 +136,24 @@ const visiblePorts = computed(() => {
 
 const hasDescribedPorts = computed(() => enrichedPorts.value.some((p) => p.label));
 
+const portServices = computed(() => {
+  if (!stack.value?.services) return [];
+  const seen = new Set();
+  return stack.value.services
+    .filter((service) => service.composeService)
+    .filter((service) => {
+      if (seen.has(service.composeService)) return false;
+      seen.add(service.composeService);
+      return true;
+    })
+    .map((service) => ({
+      value: service.composeService,
+      label: service.service || service.composeService,
+    }));
+});
+
+const needsPortServiceSelection = computed(() => portServices.value.length > 1);
+
 // Collect all unique mounts across all services (includes svcId for backup ops)
 const allMounts = computed(() => {
   if (!stack.value) return [];
@@ -199,6 +219,9 @@ async function fetchStack() {
     const data = await res.json();
     if (data.success) {
       stack.value = data.stack;
+      if (!portServices.value.some((service) => service.value === newPort.value.serviceName)) {
+        newPort.value.serviceName = portServices.value[0]?.value || "";
+      }
     } else {
       toast.error(t('stackView.stackNotFound'));
       router.push("/");
@@ -208,6 +231,41 @@ async function fetchStack() {
     toast.error(t('stackView.failedToLoadStack'));
   } finally {
     loading.value = false;
+  }
+}
+
+async function openPort() {
+  if (openingPort.value || !stack.value) return;
+
+  const serviceName = String(newPort.value.serviceName || "").trim();
+  const portMapping = String(newPort.value.mapping || "").trim();
+
+  if ((!serviceName && needsPortServiceSelection.value) || !portMapping) {
+    toast.error(t('stackView.portFormInvalid'));
+    return;
+  }
+
+  openingPort.value = true;
+  toast.info(t('stackView.openingPort', { portMapping }));
+
+  try {
+    const res = await fetch(`${apiUrl.value}/api/stacks/${projectId.value}/ports`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ serviceName, portMapping }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || t('stackView.failedToOpenPort'));
+    }
+
+    toast.success(t('stackView.portOpened', { portMapping: data.port?.portMapping || portMapping }));
+    newPort.value.mapping = "";
+    await fetchStack();
+  } catch (error) {
+    toast.error(error.message || t('stackView.failedToOpenPort'));
+  } finally {
+    openingPort.value = false;
   }
 }
 
@@ -573,7 +631,7 @@ onUnmounted(() => {
       </div>
 
       <!-- ── Published Ports ────────────────────────────────────────────────── -->
-      <div v-if="enrichedPorts.length > 0" class="space-y-4">
+      <div class="space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500 flex items-center gap-2">
             <Network :size="12" />
@@ -594,7 +652,45 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-zinc-800 rounded-xl p-4 sm:p-5 space-y-4">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-[11px] font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300">{{ t('stackView.openAnotherPort') }}</div>
+              <p class="mt-1 text-xs text-gray-500 dark:text-zinc-400">{{ t('stackView.openAnotherPortHint') }}</p>
+            </div>
+            <div class="hidden sm:flex items-center justify-center w-9 h-9 rounded-lg bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 text-gray-500 dark:text-zinc-400">
+              <Plus :size="16" />
+            </div>
+          </div>
+
+          <div :class="needsPortServiceSelection ? 'grid grid-cols-1 sm:grid-cols-2 gap-3' : 'grid grid-cols-1 gap-3'">
+            <label v-if="needsPortServiceSelection" class="space-y-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-500">{{ t('stackView.service') }}</span>
+              <select v-model="newPort.serviceName" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+                <option v-for="service in portServices" :key="service.value" :value="service.value">{{ service.label }}</option>
+              </select>
+            </label>
+
+            <label class="space-y-1.5">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-500">{{ t('stackView.portMappingLabel') }}</span>
+              <input v-model="newPort.mapping" placeholder="9000:9000 or 9000 or 53:53/udp" class="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 font-mono" />
+              <p class="text-[11px] text-gray-500 dark:text-zinc-400">{{ t('stackView.portMappingHint') }}</p>
+            </label>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              @click="openPort"
+              :disabled="openingPort || portServices.length === 0"
+              class="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-blue-200 dark:border-blue-500/20 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Plus :size="12" />
+              {{ openingPort ? t('stackView.openingPortAction') : t('stackView.openPortAction') }}
+            </button>
+          </div>
+        </div>
+
+        <div v-if="enrichedPorts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="(p, i) in visiblePorts"
             :key="i"
@@ -644,11 +740,11 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
-      </div>
 
-      <div v-else class="bg-gray-50 dark:bg-zinc-900/40 border border-dashed border-gray-200 dark:border-zinc-800 rounded-xl px-6 py-5 flex items-center gap-3 text-gray-400 dark:text-zinc-500">
-        <Network :size="16" class="shrink-0" />
-        <span class="text-xs font-medium">{{ t('stackView.noPortsPublished') }}</span>
+        <div v-else class="bg-gray-50 dark:bg-zinc-900/40 border border-dashed border-gray-200 dark:border-zinc-800 rounded-xl px-6 py-5 flex items-center gap-3 text-gray-400 dark:text-zinc-500">
+          <Network :size="16" class="shrink-0" />
+          <span class="text-xs font-medium">{{ t('stackView.noPortsPublished') }}</span>
+        </div>
       </div>
 
       <!-- ── Storage (Named Volumes) ────────────────────────────────────── -->

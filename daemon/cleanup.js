@@ -1,6 +1,7 @@
 import Docker from "dockerode";
 import { readFile, access } from "fs/promises";
 import { resolveComposeCommand } from "./compose.js";
+import { getProjectComposeRef, deleteProjectCompose } from "./stack-compose.js";
 import { spawnProcess, getBaseAppId } from "./utils.js";
 import { cleanupExpiredBrowsers } from "./dufs.js";
 import path from "path";
@@ -145,9 +146,9 @@ export async function cleanupExpiredApps() {
           const appsDir = path.join(__dirname, "..", "apps");
           const baseAppId = getBaseAppId(composeProject);
           const appPath = path.join(appsDir, baseAppId);
-          const composePath = path.join(appPath, "compose.yml");
 
           try {
+            const { composePath, composeFile } = await getProjectComposeRef(appPath, composeProject);
             try {
               await access(composePath);
             } catch {
@@ -160,7 +161,7 @@ export async function cleanupExpiredApps() {
             const composeCmd = await resolveComposeCommand({ socketPath });
             const { stdout, stderr, exitCode } = await spawnProcess(
               composeCmd.command,
-              [...composeCmd.args, "-p", composeProject, "down"],
+              [...composeCmd.args, "-p", composeProject, "-f", composeFile, "down"],
               {
                 cwd: appPath,
                 env: {
@@ -174,6 +175,7 @@ export async function cleanupExpiredApps() {
               throw new Error(`docker compose down failed: ${stderr}`);
             }
 
+            await deleteProjectCompose(appPath, composeProject);
             log("info", `Successfully removed stack: ${composeProject}`);
             results.removed.push({
               name: composeProject,

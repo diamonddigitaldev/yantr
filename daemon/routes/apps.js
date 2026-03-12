@@ -1,5 +1,5 @@
 import path from "path";
-import { readFile, writeFile, unlink, access } from "fs/promises";
+import { readFile, writeFile, access } from "fs/promises";
 import YAML from "yaml";
 import {
   docker, log, appsDir, socketPath,
@@ -7,6 +7,7 @@ import {
 } from "../shared.js";
 import { spawnProcess, NotFoundError, BadRequestError } from "../utils.js";
 import { resolveComposeCommand } from "../compose.js";
+import { buildProjectComposeContent, writeProjectCompose } from "../stack-compose.js";
 
 export default async function appsRoutes(fastify) {
 
@@ -143,118 +144,18 @@ export default async function appsRoutes(fastify) {
       if (envContent.length > 0) await writeFile(path.join(appPath, ".env"), envContent, "utf-8");
     }
 
-    // Inject expiration labels
-    let modifiedComposeContent = composeContent;
-    if (expiresIn) {
-      const expiresInHours = parseFloat(expiresIn);
-      if (!isNaN(expiresInHours) && expiresInHours > 0) {
-        const expireAtTimestamp = Math.floor(Date.now() / 1000) + Math.floor(expiresInHours * 3600);
-        const lines = composeContent.split("\n");
-        const result = [];
-        let inLabelsSection = false, baseIndentLevel = 0;
-        for (const line of lines) {
-          result.push(line);
-          if (line.trim().startsWith("labels:")) {
-            inLabelsSection = true;
-            baseIndentLevel = line.search(/\S/);
-            const labelIndent = " ".repeat(baseIndentLevel + 2);
-            result.push(`${labelIndent}yantr.expireAt: "${expireAtTimestamp}"`);
-            result.push(`${labelIndent}yantr.temporary: "true"`);
-          } else if (inLabelsSection) {
-            const currentIndent = line.search(/\S/);
-            if (line.trim() && currentIndent <= baseIndentLevel) inLabelsSection = false;
-          }
-        }
-        modifiedComposeContent = result.join("\n");
-        await writeFile(path.join(appPath, ".compose.tmp.yml"), modifiedComposeContent, "utf-8");
-      }
-    }
-
-    // Instance-specific naming
-    if (instanceId && instanceId > 1) {
-      const lines = modifiedComposeContent.split("\n");
-      const result = [];
-      let inVolumesSection = false, inServiceVolumesSection = false;
-      for (const line of lines) {
-        let l = line;
-        if (l.match(/^volumes:\s*$/)) { inVolumesSection = true; inServiceVolumesSection = false; }
-        else if (l.match(/^[a-z]+:\s*$/) && !l.startsWith(" ")) inVolumesSection = false;
-        if (l.match(/^\s+volumes:\s*$/)) inServiceVolumesSection = true;
-        else if (l.match(/^\s+[a-z_]+:\s*$/) && !l.match(/^\s+volumes:/)) inServiceVolumesSection = false;
-
-        const cnm = l.match(/^(\s*container_name:\s*)(.+)$/);
-        if (cnm) l = `${cnm[1]}${cnm[2].trim()}-${instanceId}`;
-
-        const vdm = l.match(/^(\s+)([a-zA-Z0-9_-]+):(\s*)$/);
-        if (vdm && inVolumesSection) l = `${vdm[1]}${vdm[2]}_${instanceId}:${vdm[3]}`;
-
-        const vnm = l.match(/^(\s+name:\s+)(.+)$/);
-        if (vnm && inVolumesSection) l = `${vnm[1]}${vnm[2].trim()}_${instanceId}`;
-
-        const vrm = l.match(/^(\s*-\s+)([a-zA-Z0-9_-]+)(:.+)$/);
-        if (vrm && inServiceVolumesSection) l = `${vrm[1]}${vrm[2]}_${instanceId}${vrm[3]}`;
-
-        result.push(l);
-      }
-      modifiedComposeContent = result.join("\n");
-      await writeFile(path.join(appPath, ".compose.tmp.yml"), modifiedComposeContent, "utf-8");
-    }
-
-    // Custom port mappings
-    if (customPortMappings && Object.keys(customPortMappings).length > 0) {
-      const lines = modifiedComposeContent.split("\n");
-      const result = [];
-      for (const line of lines) {
-        let l = line;
-        const fpm = l.match(/^(\s*-\s*)(["']?)(\d+):(\d+)(\/(?:tcp|udp))?(["']?)$/);
-        if (fpm) {
-          const key = `${fpm[3]}/${(fpm[5] || "/tcp").replace("/", "")}`;
-          if (customPortMappings[key]) l = `${fpm[1]}${fpm[2]}${customPortMappings[key]}:${fpm[4]}${fpm[5] || ""}${fpm[6]}`;
-        }
-        const apm = l.match(/^(\s*-\s*)(["'])(\d+)["']$/);
-        if (apm) {
-          const key = `${apm[3]}/tcp`;
-          if (customPortMappings[key]) l = `${apm[1]}${apm[2]}${customPortMappings[key]}:${apm[3]}${apm[2]}`;
-        }
-        result.push(l);
-      }
-      modifiedComposeContent = result.join("\n");
-      await writeFile(path.join(appPath, ".compose.tmp.yml"), modifiedComposeContent, "utf-8");
-    }
-
-    // Inject extra/custom env vars directly into each compose service
     const extraEnvEntries = extraEnv && typeof extraEnv === 'object'
       ? Object.entries(extraEnv).filter(([k, v]) => k.trim() && v !== null && v !== undefined && String(v).trim() !== '')
       : [];
-    if (extraEnvEntries.length > 0) {
-      let parsedComposeFull;
-      try { parsedComposeFull = YAML.parse(modifiedComposeContent); } catch { parsedComposeFull = null; }
-      if (parsedComposeFull?.services) {
-        for (const svcName of Object.keys(parsedComposeFull.services)) {
-          const svc = parsedComposeFull.services[svcName];
-          if (Array.isArray(svc.environment)) {
-            // Convert array form to object so we can add keys
-            const envObj = {};
-            for (const entry of svc.environment) {
-              const idx = String(entry).indexOf('=');
-              if (idx > 0) envObj[entry.slice(0, idx)] = entry.slice(idx + 1);
-              else envObj[entry] = null;
-            }
-            for (const [k, v] of extraEnvEntries) envObj[k.trim()] = v;
-            svc.environment = envObj;
-          } else {
-            if (!svc.environment) svc.environment = {};
-            for (const [k, v] of extraEnvEntries) svc.environment[k.trim()] = v;
-          }
-        }
-        modifiedComposeContent = YAML.stringify(parsedComposeFull);
-        await writeFile(path.join(appPath, ".compose.tmp.yml"), modifiedComposeContent, "utf-8");
-      }
-    }
-
-    const useTmp = expiresIn || customPortMappings || (instanceId && instanceId > 1) || extraEnvEntries.length > 0;
-    const composeFile = useTmp ? ".compose.tmp.yml" : "compose.yml";
     const projectName = (instanceId && instanceId > 1) ? `${appId}-${instanceId}` : appId;
+    const modifiedComposeContent = buildProjectComposeContent(composeContent, {
+      projectId: projectName,
+      appId,
+      expiresIn,
+      customPortMappings,
+      extraEnv: Object.fromEntries(extraEnvEntries.map(([key, value]) => [key.trim(), value])),
+    });
+    const { composeFile } = await writeProjectCompose(appPath, projectName, modifiedComposeContent);
 
     const composeCmd = await resolveComposeCommand({ socketPath, log });
     try {
@@ -265,13 +166,8 @@ export default async function appsRoutes(fastify) {
       );
       if (exitCode !== 0) throw new Error(`docker compose failed with exit code ${exitCode}: ${stderr}`);
 
-      if (useTmp) {
-        try { await unlink(path.join(appPath, ".compose.tmp.yml")); } catch {}
-      }
-
       return reply.send({ success: true, message: `App '${appId}' deployed successfully`, appId, output: stdout, warnings: stderr || null, dependencyWarnings, temporary: !!expiresIn });
     } catch (error) {
-      if (useTmp) { try { await unlink(path.join(appPath, ".compose.tmp.yml")); } catch {} }
       const isArchError = error.message?.includes("no matching manifest") || error.message?.includes("platform") || error.message?.includes("architecture");
       return reply.code(500).send({ success: false, error: isArchError ? "Architecture not supported" : "Deployment failed", message: isArchError ? "This image does not support your system architecture" : error.message, stderr: error.stderr });
     }

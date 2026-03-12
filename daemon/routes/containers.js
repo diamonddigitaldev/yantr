@@ -7,6 +7,7 @@ import {
 import { spawnProcess, getBaseAppId } from "../utils.js";
 import { resolveComposeCommand } from "../compose.js";
 import { getS3Config, createContainerBackup, listVolumeBackups } from "../backup.js";
+import { getProjectComposeRef, deleteProjectCompose } from "../stack-compose.js";
 
 export default async function containersRoutes(fastify) {
 
@@ -186,20 +187,21 @@ export default async function containersRoutes(fastify) {
       if (composeProject) {
         const baseAppId = getBaseAppId(composeProject);
         const appPath = path.join(appsDir, baseAppId);
-        const composePath = path.join(appPath, "compose.yml");
 
         try {
+          const { composePath, composeFile } = await getProjectComposeRef(appPath, composeProject);
           await access(composePath);
           const composeCmd = await resolveComposeCommand({ socketPath });
           const { stdout, stderr, exitCode } = await spawnProcess(
             composeCmd.command,
-            [...composeCmd.args, "-p", composeProject, "down"],
+            [...composeCmd.args, "-p", composeProject, "-f", composeFile, "down"],
             { cwd: appPath, env: { ...process.env, DOCKER_HOST: `unix://${socketPath}` } }
           );
           if (exitCode !== 0) throw new Error(`docker compose down failed: ${stderr}`);
+          await deleteProjectCompose(appPath, composeProject);
           return reply.send({ success: true, message: `App stack '${composeProject}' removed successfully`, container: containerName, stackRemoved: true, volumesRemoved: [], volumesFailed: [], output: stdout });
         } catch (err) {
-          log("info", `⚠️  Compose file not found at ${composePath}, falling back to single container deletion`);
+          log("info", `⚠️  Compose file not found for ${composeProject}, falling back to single container deletion`);
         }
       }
 

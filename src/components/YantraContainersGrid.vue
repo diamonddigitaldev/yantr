@@ -71,9 +71,10 @@ function navigate(group) {
         <!-- Header -->
         <div class="flex items-start justify-between mb-4">
           <div class="min-w-0 flex-1 pr-4">
-            <h3 class="font-semibold text-base text-gray-900 dark:text-white line-clamp-1 mb-2 tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h3 class="font-semibold text-base text-gray-900 dark:text-white line-clamp-1 mb-1 tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {{ group.name }}
             </h3>
+            <p class="text-[10px] font-mono text-gray-400 dark:text-zinc-500 truncate mb-1">{{ group.projectId }}</p>
 
             <div class="flex items-center gap-2 flex-wrap">
               <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md"

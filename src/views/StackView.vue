@@ -103,7 +103,7 @@ const caddyProxies = computed(() => stack.value?.caddyProxies || []);
 watch(() => stack.value?.publishedPorts, (ports) => {
   if (ports?.length && !caddyAuth.value.targetPort) {
     const first = ports.find((p) => p.protocol === 'tcp') || ports[0];
-    if (first) caddyAuth.value.targetPort = String(first.hostPort);
+    if (first) caddyAuth.value.targetPort = String(first.containerPort);
   }
 }, { immediate: true });
 

@@ -45,10 +45,10 @@ const portOptions = computed(() => {
     for (const p of ports) {
       if (p.PublicPort && p.Type === 'tcp') {
         result.push({
-          label: `${c.name}  :${p.PublicPort}`,
-          value: `${projectId}:${p.PublicPort}`,
+          label: `${c.name}  :${p.PrivatePort}`,
+          value: `${projectId}:${p.PrivatePort}`,
           projectId,
-          targetPort: p.PublicPort,
+          targetPort: p.PrivatePort,
         })
       }
     }

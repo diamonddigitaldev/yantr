@@ -108,20 +108,18 @@ export default async function proxyRoutes(fastify) {
       return reply.code(400).send({ success: false, error: `Service '${serviceName}' not found in compose` })
     }
 
-    // Translate host port → container port so caddy.js can resolve it dynamically
-    // from live Docker bindings even after container restarts change the host port.
+    // Validate the container port exists on the service
     const serviceContainer = projectContainers.find(c => c.Labels?.['com.docker.compose.service'] === serviceName)
-    const portBinding = (serviceContainer?.Ports || []).find(p => p.PublicPort === Number(targetPort))
+    const portBinding = (serviceContainer?.Ports || []).find(p => p.PrivatePort === Number(targetPort))
     if (!portBinding) {
-      return reply.code(400).send({ success: false, error: `No container port found for host port ${targetPort} on service '${serviceName}'` })
+      return reply.code(400).send({ success: false, error: `Container port ${targetPort} not found on service '${serviceName}'` })
     }
-    const containerPort = portBinding.PrivatePort
 
     // Apply caddy labels — convert array labels to map if needed
     if (!service.labels || Array.isArray(service.labels)) service.labels = {}
     service.labels['yantr.caddy.enabled'] = 'true'
     service.labels['yantr.caddy.serve.port'] = String(servePort)
-    service.labels['yantr.caddy.target.port'] = String(containerPort)
+    service.labels['yantr.caddy.target.port'] = String(targetPort)
     if (passHash) {
       service.labels['yantr.caddy.auth.user'] = String(authUser)
       // Encode as hex to avoid '$' being treated as variable expansion by docker-compose.

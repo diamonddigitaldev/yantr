@@ -630,7 +630,7 @@
     "caddyAuthTitle": "Authentication",
     "caddyAuthHeading": "Protect with Caddy Auth Proxy",
     "caddyAuthHint": "Enable the built-in Caddy proxy to add basic auth in front of this app. Caddy proxies the app's port and serves a password-protected version on a new port — no extra containers needed.",
-    "caddyAuthTargetPort": "App Port",
+    "caddyAuthTargetPort": "Container Port",
     "caddyAuthTargetHint": "The port this app is currently running on.",
     "caddyAuthServePort": "Protected Port",
     "caddyAuthServeHint": "New port Caddy will listen on (password-protected).",

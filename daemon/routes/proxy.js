@@ -11,7 +11,6 @@ import {
   stringifyCompose,
   writeProjectCompose,
   getComposeProcessEnv,
-  applyCurrentPublishedPorts,
 } from '../stack-compose.js'
 import { hashPassword, reloadCaddyConfig, isRunning, getCaddyProxies, startCaddy } from '../caddy.js'
 
@@ -27,19 +26,7 @@ async function getBootstrappedCompose(projectId, projectContainers) {
     composeContent = await readFile(composeRef.composePath, 'utf-8')
   } else {
     const baseContent = await readFile(composeRef.composePath, 'utf-8')
-    const servicePorts = {}
-    for (const c of projectContainers) {
-      const svc = c.Labels?.['com.docker.compose.service']
-      if (!svc) continue
-      if (!servicePorts[svc]) servicePorts[svc] = []
-      for (const p of (c.Ports || [])) {
-        if (p.PublicPort) {
-          servicePorts[svc].push({ hostPort: p.PublicPort, containerPort: p.PrivatePort, protocol: p.Type })
-        }
-      }
-    }
     const bootstrapped = parseCompose(buildProjectComposeContent(baseContent, { projectId, appId: baseAppId }))
-    applyCurrentPublishedPorts(bootstrapped, servicePorts)
     composeContent = stringifyCompose(bootstrapped)
   }
 
@@ -121,11 +108,20 @@ export default async function proxyRoutes(fastify) {
       return reply.code(400).send({ success: false, error: `Service '${serviceName}' not found in compose` })
     }
 
+    // Translate host port → container port so caddy.js can resolve it dynamically
+    // from live Docker bindings even after container restarts change the host port.
+    const serviceContainer = projectContainers.find(c => c.Labels?.['com.docker.compose.service'] === serviceName)
+    const portBinding = (serviceContainer?.Ports || []).find(p => p.PublicPort === Number(targetPort))
+    if (!portBinding) {
+      return reply.code(400).send({ success: false, error: `No container port found for host port ${targetPort} on service '${serviceName}'` })
+    }
+    const containerPort = portBinding.PrivatePort
+
     // Apply caddy labels — convert array labels to map if needed
     if (!service.labels || Array.isArray(service.labels)) service.labels = {}
     service.labels['yantr.caddy.enabled'] = 'true'
     service.labels['yantr.caddy.serve.port'] = String(servePort)
-    service.labels['yantr.caddy.target.port'] = String(targetPort)
+    service.labels['yantr.caddy.target.port'] = String(containerPort)
     if (passHash) {
       service.labels['yantr.caddy.auth.user'] = String(authUser)
       // Encode as hex to avoid '$' being treated as variable expansion by docker-compose.

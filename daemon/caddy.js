@@ -68,13 +68,21 @@ export async function getCaddyProxies() {
       const labels = c.Labels || {}
       if (labels['yantr.caddy.enabled'] !== 'true') continue
       const servePort = Number(labels['yantr.caddy.serve.port'])
-      const targetPort = Number(labels['yantr.caddy.target.port'])
-      if (!servePort || !targetPort) continue
+      const containerPort = Number(labels['yantr.caddy.target.port'])
+      if (!servePort || !containerPort) continue
+      // Resolve current host port from live Docker port bindings
+      const portBinding = (c.Ports || []).find(p => p.PrivatePort === containerPort && p.PublicPort)
+      const targetPort = portBinding?.PublicPort || null
+      if (!targetPort) {
+        log('warn', `[caddy] No host port found for container port ${containerPort} on ${(c.Names[0] || '').replace(/^\//, '')} — skipping`)
+        continue
+      }
       proxies.push({
         containerName: (c.Names[0] || '').replace(/^\//, ''),
         containerId: c.Id,
         projectId: labels['com.docker.compose.project'] || null,
         servePort,
+        containerPort,
         targetPort,
         authUser: labels['yantr.caddy.auth.user'] || null,
         authPassHash: normalizeStoredHash(labels['yantr.caddy.auth.pass']),

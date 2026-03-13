@@ -84,7 +84,7 @@ onUnmounted(() => {
     <NotificationBanner />
     <!-- Desktop Sidebar -->
     <aside
-      class="hidden md:flex bg-white dark:bg-[#0A0A0A] flex-col items-center border-r border-gray-200 dark:border-zinc-800 w-20 py-6 px-2 fixed h-screen z-50"
+      class="hidden md:flex bg-white dark:bg-[#0A0A0A] flex-col items-center w-20 py-6 px-2 fixed h-screen z-50"
       style="--sidebar-size: 5rem"
     >
       <!-- Navigation (Top) -->

@@ -228,7 +228,13 @@ onUnmounted(() => {
 
             <!-- Dynamic Widgets from src/Widgets/ -->
             <template v-if="showMetrics">
-              <component v-for="(widget, i) in widgets" :is="widget" :key="i" />
+              <div
+                v-for="(widget, i) in widgets"
+                :key="i"
+                :class="widget.__vccOpts?.colSpan === 2 || widget.colSpan === 2 ? 'sm:col-span-2' : ''"
+              >
+                <component :is="widget" class="h-full" />
+              </div>
             </template>
           </div>
         </div>

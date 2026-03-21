@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, defineOptions } from 'vue'
 import { useRouter } from 'vue-router'
+defineOptions({ colSpan: 2 });
 import { useI18n } from 'vue-i18n'
 import { Cloud, CheckCircle2, AlertCircle, Settings, ArrowRight, ShieldCheck, Zap } from 'lucide-vue-next'
 

@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, defineOptions } from 'vue'
 import { useI18n } from 'vue-i18n'
+defineOptions({ colSpan: 2 });
 import { Cpu, HardDrive, MemoryStick, Server, ShieldCheck } from 'lucide-vue-next'
 import { formatBytes } from '../utils/metrics'
 import { useApiUrl } from '../composables/useApiUrl'

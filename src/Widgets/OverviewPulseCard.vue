@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, defineOptions } from "vue";
 import { useI18n } from "vue-i18n";
+defineOptions({ colSpan: 2 });
 import { Layers, Database, Box, HardDrive, Cpu, Zap } from "lucide-vue-next";
 import { useApiUrl } from "../composables/useApiUrl";
 

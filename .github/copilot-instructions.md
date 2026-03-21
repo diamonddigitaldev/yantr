@@ -31,6 +31,9 @@ When editing frontend code in this repo, follow these rules.
 
 - Prefer compact, scannable card or list layouts over dense tables when presenting small sets of app data.
 - Keep the primary action obvious and close to the data it acts on.
+- For dashboard cards, prefer a minimal identity-card style: quiet header, one strong focal line, at most one or two lightweight detail rows, and a clear bottom action.
+- Do not use nested section backgrounds, pill backgrounds, borders, rings, or divider lines to create hierarchy inside dashboard cards.
+- Create emphasis with spacing, typography, icon placement, and subtle hover motion instead of extra fills or outlines.
 
 ## Consistency
 

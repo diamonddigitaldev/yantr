@@ -1,13 +1,61 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { Bot, ChevronRight } from "lucide-vue-next";
+import { ArrowUpRight, Bot, ChevronRight, PackagePlus } from "lucide-vue-next";
 import { useApiUrl } from "../composables/useApiUrl";
 
 const router = useRouter();
 const { apiUrl } = useApiUrl();
 const opencodePort = ref(null);
 const opencodeInstalled = ref(false);
+
+const isRunning = computed(() => Boolean(opencodePort.value));
+
+const statusLabel = computed(() => {
+  if (isRunning.value) return `Live on port ${opencodePort.value}`;
+  if (opencodeInstalled.value) return "Installed locally";
+  return "Ready to install";
+});
+
+const statusDescription = computed(() => {
+  if (isRunning.value) return "Open the workspace and manage apps from chat.";
+  if (opencodeInstalled.value) return "The app is installed, but no host port is published yet.";
+  return "Install the Yantr build to start creating and updating apps with prompts.";
+});
+
+const primaryLabel = computed(() => {
+  if (isRunning.value || opencodeInstalled.value) return "Open OpenCode";
+  return "Install OpenCode Yantr";
+});
+
+const primaryIcon = computed(() => (isRunning.value || opencodeInstalled.value ? ArrowUpRight : PackagePlus));
+
+const primaryDescription = computed(() => {
+  if (isRunning.value) return "Launch the active workspace";
+  if (opencodeInstalled.value) return "Open the install page and finish setup";
+  return "Go to the app page to install and configure it";
+});
+
+const statusTone = computed(() => {
+  if (isRunning.value) {
+    return {
+      dot: "bg-emerald-500",
+      text: "text-emerald-700 dark:text-emerald-400",
+    };
+  }
+
+  if (opencodeInstalled.value) {
+    return {
+      dot: "bg-amber-500",
+      text: "text-amber-700 dark:text-amber-400",
+    };
+  }
+
+  return {
+    dot: "bg-sky-500",
+    text: "text-sky-700 dark:text-sky-400",
+  };
+});
 
 onMounted(async () => {
   try {
@@ -40,38 +88,153 @@ function openOpenCode() {
 </script>
 
 <template>
-  <div @click="openOpenCode" class="relative group h-full flex flex-col bg-white dark:bg-[#0A0A0A] rounded-xl overflow-hidden transition-all duration-400 hover:shadow-2xl hover:shadow-black/5 dark:hover:shadow-black/40 cursor-pointer">
-    <div class="absolute top-0 left-0 w-full h-0.5 bg-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-    <div class="relative z-10 flex flex-col h-full p-6">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-lg bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-500">
-          <Bot class="w-5 h-5 text-gray-400 dark:text-zinc-500 group-hover:text-purple-500 transition-colors" />
+  <div
+    @click="openOpenCode"
+    @keydown.enter.prevent="openOpenCode"
+    @keydown.space.prevent="openOpenCode"
+    class="opencode-card group relative flex h-full cursor-pointer flex-col rounded-2xl p-5 sm:p-6 smooth-shadow transition-all duration-300 hover:-translate-y-1 hover:smooth-shadow-lg"
+    style="background: var(--surface)"
+    role="button"
+    tabindex="0"
+  >
+    <div class="relative z-10 flex items-start justify-between gap-4">
+      <div class="flex items-center gap-4 min-w-0">
+        <div class="opencode-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+          <Bot class="h-5 w-5" style="color: var(--text-primary)" />
         </div>
-        <div>
-          <h3 class="text-sm font-semibold text-gray-900 dark:text-white tracking-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">AI App Manager</h3>
-          <div class="text-[11px] font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider mt-1">Powered by OpenCode</div>
+
+        <div class="min-w-0">
+          <h3 class="text-sm font-semibold tracking-tight transition-colors duration-300" style="color: var(--text-primary)">
+            OpenCode
+          </h3>
+          <div class="mt-1 flex items-center gap-2 min-w-0">
+            <span class="h-1.5 w-1.5 shrink-0 rounded-full status-dot" :class="statusTone.dot"></span>
+            <span class="text-[11px] font-medium uppercase tracking-[0.14em] truncate" style="color: var(--text-secondary)">
+              {{ statusLabel }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative z-10 flex-1 flex flex-col justify-end gap-5 pt-6">
+      <div class="group/hero">
+        <div class="text-[10px] font-bold uppercase tracking-[0.2em] mb-2" style="color: var(--text-secondary)">
+          Prompt to workflow
+        </div>
+        <div class="opencode-hero text-3xl font-bold tracking-tight leading-none" style="color: var(--text-primary)">
+          Chat builds apps.
         </div>
       </div>
 
-      <p class="text-xs text-gray-500 dark:text-zinc-400 leading-relaxed mb-4">
-        Deploy and manage apps using AI. Just describe what you want in chat — OpenCode handles the rest.
-      </p>
+      <div class="grid grid-cols-1 gap-3">
+        <div class="flex items-start gap-3">
+          <span class="mt-1 h-2 w-2 shrink-0 rounded-full" :class="statusTone.dot"></span>
+          <div class="min-w-0">
+            <div class="text-[9px] font-bold uppercase tracking-[0.18em]" style="color: var(--text-secondary)">
+              Workflow
+            </div>
+            <p class="mt-1 text-xs font-medium leading-relaxed" style="color: var(--text-primary)">
+              Describe the app you want in chat and turn it into an installable Yantr workflow.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <span class="mt-1 h-2 w-2 shrink-0 rounded-full" :class="statusTone.dot"></span>
+          <div class="min-w-0">
+            <div class="text-[9px] font-bold uppercase tracking-[0.18em]" style="color: var(--text-secondary)">
+              Status
+            </div>
+            <p class="opencode-copy mt-1 text-xs font-medium leading-relaxed" style="color: var(--text-primary)">
+              {{ statusDescription }}
+            </p>
+          </div>
+        </div>
+      </div>
 
       <button
         type="button"
         @click.stop="openOpenCode"
-        class="mt-auto flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-zinc-900/50 border border-gray-100 dark:border-zinc-800/50 hover:border-gray-300 dark:hover:border-zinc-700 transition-all duration-300 focus:outline-none group/btn"
+        class="group/btn opencode-cta flex min-h-12 w-full items-center justify-between rounded-xl px-0 py-2 text-left transition-all duration-300"
       >
-        <div class="flex items-center gap-3 min-w-0">
-          <div v-if="opencodePort" class="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0"></div>
-          <div class="flex flex-col text-left min-w-0">
-            <span class="text-xs font-semibold text-gray-900 dark:text-white">{{ opencodePort ? "Open OpenCode" : opencodeInstalled ? "Open OpenCode" : "Install OpenCode Yantr" }}</span>
-            <span class="text-[10px] text-gray-500 dark:text-zinc-400">{{ opencodePort ? `Running on port ${opencodePort}` : opencodeInstalled ? "Installed, but host port is not available" : "Not installed yet" }}</span>
+        <div class="flex min-w-0 items-center gap-3">
+          <div
+            class="opencode-cta-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover/btn:-translate-y-0.5 group-hover/btn:scale-105"
+            :class="statusTone.text"
+          >
+            <component :is="primaryIcon" class="h-4 w-4" />
+          </div>
+
+          <div class="min-w-0">
+            <div class="text-sm font-semibold transition-transform duration-300 group-hover/btn:translate-x-0.5" style="color: var(--text-primary)">
+              {{ primaryLabel }}
+            </div>
+            <div class="text-[11px] leading-relaxed" style="color: var(--text-secondary)">
+              {{ primaryDescription }}
+            </div>
           </div>
         </div>
-        <ChevronRight class="w-4 h-4 text-gray-400 dark:text-zinc-600 group-hover/btn:text-gray-900 dark:group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all" />
+        <ChevronRight class="opencode-arrow h-4 w-4 shrink-0 transition-all duration-300 group-hover/btn:translate-x-1 group-hover/btn:opacity-100" style="color: var(--text-secondary)" />
       </button>
     </div>
   </div>
 </template>
+
+<style scoped>
+.opencode-card {
+  overflow: hidden;
+}
+
+.opencode-card:hover h3 {
+  color: color-mix(in srgb, var(--text-primary) 78%, #2563eb 22%);
+}
+
+.opencode-icon {
+  transition: transform var(--yantra-dur) var(--yantra-ease), opacity var(--yantra-dur) var(--yantra-ease);
+  opacity: 0.86;
+}
+
+.opencode-card:hover .opencode-icon {
+  transform: translateY(-2px) rotate(-6deg);
+  opacity: 1;
+}
+
+.opencode-hero {
+  transition: transform var(--yantra-dur) var(--yantra-ease), color var(--yantra-dur) var(--yantra-ease);
+}
+
+.opencode-card:hover .opencode-hero {
+  transform: translateX(4px);
+  color: color-mix(in srgb, var(--text-primary) 82%, #2563eb 18%);
+}
+
+.opencode-copy {
+  opacity: 0.92;
+  transition: opacity var(--yantra-dur-fast) var(--yantra-ease), transform var(--yantra-dur) var(--yantra-ease);
+}
+
+.opencode-card:hover .opencode-copy {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+.opencode-cta {
+  position: relative;
+}
+
+.opencode-arrow {
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opencode-card,
+  .opencode-icon,
+  .opencode-hero,
+  .opencode-copy,
+  .opencode-cta,
+  .opencode-arrow {
+    transition: none !important;
+  }
+}
+</style>

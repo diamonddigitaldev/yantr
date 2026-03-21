@@ -725,36 +725,78 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div v-if="enrichedPorts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <div
-            v-for="(p, i) in visiblePorts"
-            :key="i"
-            class="rounded-2xl p-5 border border-gray-100 dark:border-zinc-800 smooth-shadow hover:smooth-shadow-lg hover:-translate-y-1 transition-all duration-300 group"
-            style="background: var(--surface)"
-          >
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-gray-100 dark:border-zinc-800 group-hover:scale-110 group-hover:-rotate-6 transition-all shrink-0" style="background: var(--surface-muted)">
-                <Network :size="16" class="text-gray-500 dark:text-zinc-400 group-hover:text-blue-500 transition-colors" />
-              </div>
-              <div class="min-w-0">
-                <div class="text-xs font-bold truncate" style="color: var(--text-primary)">{{ p.label || p.service }}</div>
-                <div class="text-[10px] font-bold uppercase tracking-widest mt-0.5" style="color: var(--text-secondary)">{{ p.protocol }}{{ p.labeledProtocol ? ` / ${p.labeledProtocol}` : "" }}</div>
-              </div>
-            </div>
-            <div class="space-y-2 mb-4">
-              <div class="flex justify-between text-xs">
-                <span class="font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.hostPort") }}</span>
-                <span class="font-mono font-bold" style="color: var(--text-primary)">{{ p.hostPort }}</span>
-              </div>
-              <div class="flex justify-between text-xs">
-                <span class="font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.containerPort") }}</span>
-                <span class="font-mono" style="color: var(--text-secondary)">{{ p.containerPort }}</span>
-              </div>
-            </div>
-            <a v-if="p.protocol === 'tcp'" :href="appUrl(p.hostPort, p.labeledProtocol || 'http')" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-900 dark:bg-zinc-100 text-white dark:text-gray-900 hover:opacity-90 hover:scale-[1.02] active:scale-95 transition-all">
-              <ExternalLink :size="13" />{{ t("stackView.open") }}
-            </a>
-            <div v-else class="flex items-center justify-center w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-800" style="color: var(--text-secondary)">{{ p.protocol.toUpperCase() }} {{ t("stackView.port") }}</div>
+        <div v-if="enrichedPorts.length > 0" class="rounded-2xl overflow-hidden" style="background: var(--surface)">
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+              <thead>
+                <tr>
+                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                    {{ t("stackView.service") }}
+                  </th>
+                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                    {{ t("stackView.hostPort") }}
+                  </th>
+                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                    {{ t("stackView.containerPort") }}
+                  </th>
+                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                    {{ t("stackView.protocol") || "Protocol" }}
+                  </th>
+                  <th class="px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                    {{ t("stackView.open") }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(p, i) in visiblePorts"
+                  :key="i"
+                  class="group border-b border-gray-100 dark:border-zinc-800/80 last:border-b-0 hover:bg-black/2 dark:hover:bg-white/3 hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  <td class="px-4 py-3.5 align-middle">
+                    <div class="flex items-center gap-3 min-w-55">
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center border border-gray-100 dark:border-zinc-800 shrink-0 group-hover:scale-110 group-hover:-rotate-6 group-hover:border-gray-300 dark:group-hover:border-zinc-600 transition-all duration-300" style="background: var(--surface-muted)">
+                        <Network :size="15" class="text-gray-500 dark:text-zinc-400 group-hover:text-blue-500 group-hover:scale-110 transition-all duration-300" />
+                      </div>
+                      <div class="min-w-0">
+                        <div class="font-bold truncate group-hover:translate-x-0.5 transition-transform duration-300" style="color: var(--text-primary)">{{ p.label || p.service }}</div>
+                        <div class="text-[11px] truncate mt-0.5 group-hover:text-blue-500 transition-colors duration-300" style="color: var(--text-secondary)">{{ p.service }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3.5 align-middle">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-1 font-mono font-bold text-xs bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20 group-hover:scale-105 group-hover:-translate-y-0.5 transition-all duration-300">
+                      :{{ p.hostPort }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3.5 align-middle">
+                    <span class="font-mono text-xs group-hover:tracking-wider transition-all duration-300" style="color: var(--text-primary)">{{ p.containerPort }}</span>
+                  </td>
+                  <td class="px-4 py-3.5 align-middle">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-800 group-hover:border-blue-200 dark:group-hover:border-blue-500/20 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300" style="color: var(--text-secondary)">
+                      {{ p.protocol }}{{ p.labeledProtocol ? ` / ${p.labeledProtocol}` : "" }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3.5 align-middle text-right">
+                    <a
+                      v-if="p.protocol === 'tcp'"
+                      :href="appUrl(p.hostPort, p.labeledProtocol || 'http')"
+                      target="_blank"
+                      class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-900 dark:bg-zinc-100 text-white dark:text-gray-900 group-hover:translate-x-1 group-hover:scale-105 hover:opacity-90 active:scale-95 transition-all duration-300"
+                    >
+                      <ExternalLink :size="13" class="group-hover:rotate-12 transition-transform duration-300" />{{ t("stackView.open") }}
+                    </a>
+                    <span
+                      v-else
+                      class="inline-flex items-center rounded-full px-3 py-2 text-[10px] font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-800 group-hover:scale-105 transition-transform duration-300"
+                      style="color: var(--text-secondary)"
+                    >
+                      {{ p.protocol.toUpperCase() }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 

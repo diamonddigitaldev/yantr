@@ -725,24 +725,24 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div v-if="enrichedPorts.length > 0" class="rounded-2xl overflow-hidden" style="background: var(--surface)">
-          <div class="overflow-x-auto">
+        <div v-if="enrichedPorts.length > 0" class="rounded-2xl overflow-hidden mt-2" style="background: var(--surface)">
+          <div class="overflow-x-auto px-2 sm:px-3">
             <table class="min-w-full text-sm">
               <thead>
                 <tr>
-                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                  <th class="px-5 py-3.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
                     {{ t("stackView.service") }}
                   </th>
-                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                  <th class="px-5 py-3.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
                     {{ t("stackView.hostPort") }}
                   </th>
-                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                  <th class="px-5 py-3.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
                     {{ t("stackView.containerPort") }}
                   </th>
-                  <th class="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                  <th class="px-5 py-3.5 text-left text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
                     {{ t("stackView.protocol") || "Protocol" }}
                   </th>
-                  <th class="px-4 py-2.5 text-right text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
+                  <th class="px-5 py-3.5 text-right text-[10px] font-bold uppercase tracking-[0.24em] border-b border-gray-100 dark:border-zinc-800" style="color: var(--text-secondary)">
                     {{ t("stackView.open") }}
                   </th>
                 </tr>
@@ -753,7 +753,7 @@ onUnmounted(() => {
                   :key="i"
                   class="group border-b border-gray-100 dark:border-zinc-800/80 last:border-b-0 hover:bg-black/2 dark:hover:bg-white/3 hover:-translate-y-0.5 transition-all duration-300"
                 >
-                  <td class="px-4 py-3.5 align-middle">
+                  <td class="px-5 py-4.5 align-middle">
                     <div class="flex items-center gap-3 min-w-55">
                       <div class="w-9 h-9 rounded-xl flex items-center justify-center border border-gray-100 dark:border-zinc-800 shrink-0 group-hover:scale-110 group-hover:-rotate-6 group-hover:border-gray-300 dark:group-hover:border-zinc-600 transition-all duration-300" style="background: var(--surface-muted)">
                         <Network :size="15" class="text-gray-500 dark:text-zinc-400 group-hover:text-blue-500 group-hover:scale-110 transition-all duration-300" />
@@ -764,20 +764,20 @@ onUnmounted(() => {
                       </div>
                     </div>
                   </td>
-                  <td class="px-4 py-3.5 align-middle">
+                  <td class="px-5 py-4.5 align-middle">
                     <span class="inline-flex items-center rounded-full px-2.5 py-1 font-mono font-bold text-xs bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20 group-hover:scale-105 group-hover:-translate-y-0.5 transition-all duration-300">
                       :{{ p.hostPort }}
                     </span>
                   </td>
-                  <td class="px-4 py-3.5 align-middle">
+                  <td class="px-5 py-4.5 align-middle">
                     <span class="font-mono text-xs group-hover:tracking-wider transition-all duration-300" style="color: var(--text-primary)">{{ p.containerPort }}</span>
                   </td>
-                  <td class="px-4 py-3.5 align-middle">
+                  <td class="px-5 py-4.5 align-middle">
                     <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-800 group-hover:border-blue-200 dark:group-hover:border-blue-500/20 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300" style="color: var(--text-secondary)">
                       {{ p.protocol }}{{ p.labeledProtocol ? ` / ${p.labeledProtocol}` : "" }}
                     </span>
                   </td>
-                  <td class="px-4 py-3.5 align-middle text-right">
+                  <td class="px-5 py-4.5 align-middle text-right">
                     <a
                       v-if="p.protocol === 'tcp'"
                       :href="appUrl(p.hostPort, p.labeledProtocol || 'http')"

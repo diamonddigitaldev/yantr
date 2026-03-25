@@ -6,16 +6,14 @@ services:
       yantr.app: "cashu-me"
       yantr.service: "Tor Onion Service"
     restart: unless-stopped
+    networks:
+      - cashu-me
     volumes:
       - tor-keys:/var/lib/tor
-    environment:
-      - TOR_ORPORT_PORT=0
-      - TOR_CONTROL_PORT=9051
-      - TOR_DNS_PORT=53
     command: |
       SOCKSPort 0.0.0.0:9050
       HiddenServiceDir /var/lib/tor/onion_service
-      HiddenServicePort 80 127.0.0.1:3000
+      HiddenServicePort 80 web:3000
 
   web:
     build:
@@ -26,8 +24,13 @@ services:
       yantr.app: "cashu-me"
       yantr.service: "Web UI"
     restart: unless-stopped
+    networks:
+      - cashu-me
     ports:
       - "3000"
+
+networks:
+  cashu-me:
 
 volumes:
   tor-keys:

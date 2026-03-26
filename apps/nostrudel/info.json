@@ -15,7 +15,7 @@
     { "port": 80, "protocol": "HTTP", "label": "Web UI" }
   ],
   "short_description": "Feature-rich Nostr web client for exploring the protocol, viewing events, and managing keys.",
-  "description": "noStrudel is a powerful and feature-rich Nostr web client designed for exploring the Nostr protocol. It allows users to view raw events, manage multiple accounts, explore relays, and understand the inner workings of the decentralized social network. Features include NIP-49 encrypted key storage, Blossom media uploads, Zap streaming integration with Zap.Stream, badge showcases, animated emoji support, list management (mute lists), powerful search functionality, thread tabs showing replies, quotes, zaps, and a launchpad for notifications and messages. It's designed for power users who want deep insight into how Nostr works.",
+  "description": "noStrudel is a Nostr web client for power users, offering raw event viewing, multi-account management, relay exploration, encrypted key storage (NIP-49), media uploads, Zap.Stream integration, and advanced search and threading features to inspect the protocol and interact securely.",
   "usecases": [
     "Explore the Nostr protocol by viewing raw events and understanding how data flows through relays.",
     "Post, reply, zap, and interact with the Nostr social network using your keys.",

@@ -14,7 +14,7 @@
     { "port": 3000, "protocol": "HTTP", "label": "Web UI" }
   ],
   "short_description": "Collection of 100+ networking utilities - port scanner, IP info, DNS tools, and more.",
-  "description": "Networking Toolbox is a collection of 100+ networking utilities useful for developers and sysadmins. Tools include port scanner, IP lookup, whois, DNS checker, HTTP headers viewer, speed test, traceroute, ping, SSL checker, certificate info, and many more. All tools work offline - no data sent to external servers. Perfect for troubleshooting network issues, checking configurations, or learning about networking.",
+  "description": "Networking Toolbox bundles 100+ offline networking utilities such as port scanner, IP lookup, DNS checker, traceroute, ping, HTTP header viewer, and SSL certificate inspector. Useful for troubleshooting, verifying configurations, and learning network diagnostics.",
   "usecases": [
     "Check your public IP and location info.",
     "Scan ports on a server.",

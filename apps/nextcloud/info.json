@@ -17,7 +17,7 @@
     { "port": 80, "protocol": "HTTP", "label": "Web UI" }
   ],
   "short_description": "Self-hosted cloud platform for file sync, calendars, contacts, and collaborative productivity.",
-  "description": "Nextcloud is a powerful self-hosted cloud platform that puts you in complete control of your data. It provides file sync and share capabilities, allowing you to access your files from desktop and mobile clients. Beyond files, Nextcloud includes an integrated suite of productivity apps: Calendar for scheduling and event management, Contacts for address book organization, Talk for chat and video conferencing, and Office for real-time document collaboration. Features include end-to-end encryption, two-factor authentication, file versioning, collaborative editing, federated sharing between servers, and extensive app ecosystem. It serves as a complete Google Workspace or Microsoft 365 alternative that you fully own and control.",
+  "description": "Nextcloud is a self-hosted cloud platform for file sync, calendars, contacts, chat, and collaborative editing. It includes end-to-end encryption, 2FA, file versioning, federated sharing, and a rich app ecosystem—providing a privacy-first alternative to hosted productivity suites.",
   "usecases": [
     "Replace Google Drive or Dropbox with your own self-hosted file sync and sharing solution that keeps your data on your infrastructure.",
     "Sync calendars and contacts across all your devices using CalDAV and CardDAV protocols.",

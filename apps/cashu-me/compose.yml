@@ -10,10 +10,7 @@ services:
       - cashu-me
     volumes:
       - tor-keys:/var/lib/tor
-    command: |
-      SOCKSPort 0.0.0.0:9050
-      HiddenServiceDir /var/lib/tor/onion_service
-      HiddenServicePort 80 web:80
+      - ./torrc:/etc/tor/torrc:ro
 
   web:
     build:

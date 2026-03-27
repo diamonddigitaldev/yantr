@@ -13,11 +13,11 @@ services:
     command: |
       SOCKSPort 0.0.0.0:9050
       HiddenServiceDir /var/lib/tor/onion_service
-      HiddenServicePort 80 web:3000
+      HiddenServicePort 80 web:80
 
   web:
     build:
-      context: https://github.com/cashubtc/cashu.me.git#main
+      context: .
       dockerfile: Dockerfile
     container_name: cashu-me
     labels:
@@ -26,8 +26,10 @@ services:
     restart: unless-stopped
     networks:
       - cashu-me
+    environment:
+      TZ: ${TZ:-UTC}
     ports:
-      - "3000"
+      - "3000:80"
 
 networks:
   cashu-me:

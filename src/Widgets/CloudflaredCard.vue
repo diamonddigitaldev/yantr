@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, defineOptions } from 'vue'
 import { useI18n } from 'vue-i18n'
-defineOptions({ colSpan: 2 });
+defineOptions({ colSpan: 1 });
 import { Cloud, CloudOff, Shield, ArrowRight, Key, CheckCircle, AlertCircle, Loader, Globe, Wifi } from 'lucide-vue-next'
 import { useApiUrl } from '../composables/useApiUrl'
 import { useCurrentTime } from '../composables/useCurrentTime'

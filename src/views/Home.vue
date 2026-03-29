@@ -15,22 +15,8 @@ function dailyShuffle(arr) {
   }
   return seeded;
 }
-// Interleave wide (2-col) and narrow (1-col) widgets so each row is always full:
-// pattern = [2-col][1-col][1-col] → exactly 4 grid columns, zero gaps.
-// Both pools are shuffled daily. When one pool runs out, the remainder is appended.
-function interleaveWidgets(all) {
-  const isWide = (w) => (w.__vccOpts?.colSpan ?? w.colSpan ?? 1) === 2;
-  const wide = all.filter(isWide);
-  const narrow = all.filter((w) => !isWide(w));
-  const result = [];
-  while (wide.length > 0 || narrow.length > 0) {
-    if (wide.length > 0) result.push(wide.shift());
-    if (narrow.length > 0) result.push(narrow.shift());
-    if (narrow.length > 0) result.push(narrow.shift());
-  }
-  return result;
-}
-const widgets = interleaveWidgets(dailyShuffle(Object.values(widgetModules).map((m) => m.default)));
+// All dashboard cards now use 1 column only.
+const widgets = dailyShuffle(Object.values(widgetModules).map((m) => m.default));
 import { useApiUrl } from "../composables/useApiUrl";
 import { useI18n } from "vue-i18n";
 import YantraContainersGrid from "../components/YantraContainersGrid.vue";
@@ -233,8 +219,8 @@ onUnmounted(() => {
             </router-link>
           </div>
 
-          <!-- Unified grid: all cards live together when filter is 'all' -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 [grid-auto-flow:dense]">
+          <!-- Unified grid: all cards are single-column on mobile, 3 columns on medium, 4 on large -->
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 [grid-auto-flow:dense]">
             <YantraContainersGrid v-if="showYantrApps && yantrContainers.length > 0" :containers="yantrContainers" :show-header="activeFilter !== 'all'" />
             <VolumeContainersGrid v-if="showVolumeBrowsers && volumeContainers.length > 0" :containers="volumeContainers" :show-header="activeFilter !== 'all'" @stop-browser="stopBrowser" />
             <OtherContainersGrid v-if="showDockerApps && otherContainers.length > 0" :containers="otherContainers" :show-header="activeFilter !== 'all'" @select="viewContainerDetail" />
@@ -249,7 +235,6 @@ onUnmounted(() => {
                 :key="i"
                 :is="widget"
                 class="h-full"
-                :class="widget.__vccOpts?.colSpan === 2 || widget.colSpan === 2 ? 'sm:col-span-2' : ''"
               />
             </template>
           </div>

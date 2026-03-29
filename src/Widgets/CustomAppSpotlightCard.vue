@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, defineOptions } from "vue";
 import { useRouter } from "vue-router";
-defineOptions({ colSpan: 2 });
+defineOptions({ colSpan: 1 });
 import { useI18n } from "vue-i18n";
 import { ArrowRight, Bot, Wrench } from "lucide-vue-next";
 import { useApiUrl } from "../composables/useApiUrl";

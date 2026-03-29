@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, defineOptions } from 'vue'
 import { ShieldCheck, Trash2, Loader, Globe, User, RefreshCw } from 'lucide-vue-next'
-defineOptions({ colSpan: 2 });
+defineOptions({ colSpan: 1 });
 import { useApiUrl } from '../composables/useApiUrl'
 
 const { apiUrl } = useApiUrl()

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, defineOptions } from "vue";
 import { useI18n } from "vue-i18n";
-defineOptions({ colSpan: 2 });
+defineOptions({ colSpan: 1 });
 import { Layers, Database, Box, HardDrive, Cpu, MemoryStick, Server } from "lucide-vue-next";
 import { formatBytes } from "../utils/metrics";
 import { useApiUrl } from "../composables/useApiUrl";

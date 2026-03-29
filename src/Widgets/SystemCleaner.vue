@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, defineOptions } from 'vue'
+import { ref, computed, onMounted, onUnmounted} from 'vue'
 import { useI18n } from 'vue-i18n'
-defineOptions({ colSpan: 1 });
+({ colSpan: 1 });
 import { 
   Trash2, 
   RefreshCw, 

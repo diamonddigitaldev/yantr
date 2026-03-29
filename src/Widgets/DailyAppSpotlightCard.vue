@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, defineOptions } from "vue";
+import { ref, computed, onMounted} from "vue";
 import { useRouter } from "vue-router";
-defineOptions({ colSpan: 1 });
+({ colSpan: 1 });
 import { useI18n } from "vue-i18n";
 import { ArrowRight, Bot, Layers, Sparkles } from "lucide-vue-next";
 import { useApiUrl } from "../composables/useApiUrl";

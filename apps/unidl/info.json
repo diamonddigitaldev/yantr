@@ -1,0 +1,37 @@
+{
+  "name": "UniDL",
+  "logo": "QmeQL3b6vWfQX2TEbuovsof5mv23Jkxgnp8ejTyqjQMay3",
+  "tags": [
+    "media",
+    "download",
+    "utility",
+    "streaming",
+    "video",
+    "torrent"
+  ],
+  "short_description": "Media streaming and sharing platform with Telegram integration.",
+  "description": "Media streaming and sharing platform with Telegram integration. UniDL is a self-hosted application focused on media, download, utility, streaming. It can be deployed on any device via Docker Compose.",
+  "usecases": [
+    "Self-host UniDL on your home server to media streaming and sharing platform with telegram integration without depending on third-party cloud services.",
+    "Use UniDL to manage your media workflows privately, keeping all data under your control on local infrastructure."
+  ],
+  "website": "https://github.com/besoeasy/UniDL",
+  "dependencies": [],
+  "ports": [
+    {
+      "port": 6798,
+      "protocol": "HTTP",
+      "label": "Web UI"
+    },
+    {
+      "port": 6799,
+      "protocol": "HTTP",
+      "label": "DOWNLOADS"
+    },
+    {
+      "port": 4445,
+      "protocol": "SMB",
+      "label": "Samba Drive"
+    }
+  ]
+}

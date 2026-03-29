@@ -1,10 +1,10 @@
 services:
   remote-torrent-downloader:
-    image: ghcr.io/besoeasy/remote-torrent-downloader:latest
-    container_name: remote-torrent-downloader
+    image: ghcr.io/besoeasy/UniDL:latest
+    container_name: unidl
     labels:
-      yantr.app: "remote-torrent-downloader"
-      yantr.service: "Torrent Downloader"
+      yantr.app: "unidl"
+      yantr.service: "UniDL"
     ports:
       - "6798"
       - "6799"
@@ -16,8 +16,8 @@ services:
       NSEC: ${NOSTR_NSEC}
       AUTHCODE: ${AUTHCODE}
     volumes:
-      - remote-torrent-downloader_data:/tmp/remote-torrent-downloader
+      - unidl_data:/tmp/unidl
     restart: unless-stopped
 
 volumes:
-  remote-torrent-downloader_data:
+  unidl_data:

@@ -225,82 +225,48 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-else class="relative z-10 flex h-full flex-col p-6">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex items-center gap-3 min-w-0">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-muted)] transition-all duration-500 group-hover:translate-y-[-1px]">
-            <Server class="h-5 w-5 text-[var(--text-secondary)] transition-colors group-hover:text-blue-500" />
-          </div>
-          <div class="min-w-0">
-            <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-zinc-500">{{ t("quickMetrics.hostMetrics.hostSystem") }}</div>
-            <h3 class="mt-1 truncate text-sm font-semibold tracking-tight text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">{{ greeting }}</h3>
-          </div>
+    <div v-else class="relative z-10 flex h-full flex-col p-5">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 flex items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-500/15 border border-blue-100 dark:border-blue-500/20">
+          <Server class="h-4 w-4 text-blue-600 dark:text-blue-300" />
         </div>
-
-        <div class="flex shrink-0 items-center gap-2">
-          <span class="relative flex h-2 w-2">
-            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-60"></span>
-            <span class="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-          </span>
-          <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">{{ t("quickMetrics.hostMetrics.online") }}</span>
+        <div class="min-w-0">
+          <h3 class="truncate text-lg font-semibold text-gray-900 dark:text-white">{{ osInfo.name }}</h3>
+          <p class="text-[10px] uppercase tracking-wider text-gray-400 dark:text-zinc-500">{{ t("quickMetrics.hostMetrics.hostSystem") }}</p>
         </div>
       </div>
 
-      <div class="mt-6">
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
-          <div class="min-w-0">
-            <div class="truncate text-3xl font-semibold tracking-tight text-gray-900 dark:text-white" :title="osInfo.name">{{ osInfo.name }}</div>
-            <p class="mt-2 max-w-2xl text-sm leading-relaxed text-gray-500 dark:text-zinc-400">{{ t("home.overviewPulseCard.stackRunningSmoothly") }}</p>
-          </div>
-          <div class="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500 sm:text-right">
-            <span>{{ t("quickMetrics.hostMetrics.kernel", { kernel: osInfo.kernel }) }}</span>
-            <span class="font-mono">{{ osInfo.arch }}</span>
-          </div>
-        </div>
-      </div>
+      <p class="mt-2 text-xs text-gray-500 dark:text-zinc-400">{{ t("home.overviewPulseCard.stackRunningSmoothly") }}</p>
 
-      <div class="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div
-          v-for="stat in hostStats"
-          :key="stat.key"
-          class="flex min-w-0 items-start justify-between rounded-xl bg-[var(--surface-muted)] px-4 py-4"
-        >
-          <div class="min-w-0">
-            <div class="flex items-center gap-2 text-gray-500 dark:text-zinc-400">
-              <component :is="stat.icon" :class="['h-3.5 w-3.5 shrink-0', stat.tone]" />
-              <span class="truncate text-[10px] font-bold uppercase tracking-[0.18em]">{{ stat.label }}</span>
-            </div>
-            <div class="mt-3 flex items-end gap-2">
-              <span class="truncate text-2xl font-semibold tracking-tight text-gray-900 dark:text-white tabular-nums">{{ stat.value }}</span>
-              <span v-if="stat.suffix" class="pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-500">{{ stat.suffix }}</span>
-            </div>
-          </div>
+      <dl class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+        <div class="flex items-center justify-between rounded-lg px-3 py-2">
+          <dt class="text-gray-700 dark:text-zinc-300">{{ t("home.overviewPulseCard.apps") }}</dt>
+          <dd class="text-gray-900 dark:text-white">{{ runningApps }}</dd>
         </div>
-      </div>
-
-      <div class="mt-auto pt-6">
-        <div class="rounded-xl bg-[var(--surface-muted)] px-4 py-4">
-          <div class="flex items-center justify-between gap-3">
-            <div class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-zinc-500">Stack Overview</div>
-            <div class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">
-              {{ t("home.overviewPulseCard.healthy") }} · {{ t("home.overviewPulseCard.active") }}
-            </div>
-          </div>
-
-          <div class="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
-            <div
-              v-for="stat in overviewStats"
-              :key="stat.key"
-              class="min-w-0"
-            >
-              <div class="flex items-center gap-2 text-gray-500 dark:text-zinc-400">
-                <component :is="stat.icon" :class="['h-3.5 w-3.5 shrink-0', stat.tone]" />
-                <span class="truncate text-[9px] font-bold uppercase tracking-widest">{{ stat.label }}</span>
-              </div>
-              <div class="mt-2 text-xl font-semibold tracking-tight text-gray-900 dark:text-white tabular-nums">{{ stat.value }}</div>
-            </div>
-          </div>
+        <div class="flex items-center justify-between rounded-lg px-3 py-2">
+          <dt class="text-gray-700 dark:text-zinc-300">{{ t("home.overviewPulseCard.volumes") }}</dt>
+          <dd class="text-gray-900 dark:text-white">{{ totalVolumes }}</dd>
         </div>
+        <div class="flex items-center justify-between rounded-lg px-3 py-2 sm:col-span-2">
+          <dt class="sr-only">{{ t("quickMetrics.hostMetrics.kernel") }} / {{ t("quickMetrics.hostMetrics.arch") }}</dt>
+          <dd class="font-mono text-gray-900 dark:text-white">{{ osInfo.kernel }} / {{ osInfo.arch }}</dd>
+        </div>
+        <div class="flex items-center justify-between rounded-lg px-3 py-2">
+          <dt class="text-gray-700 dark:text-zinc-300">{{ t("quickMetrics.hostMetrics.processors") }}</dt>
+          <dd class="text-gray-900 dark:text-white">{{ displayCores }}</dd>
+        </div>
+        <div class="flex items-center justify-between rounded-lg px-3 py-2">
+          <dt class="text-gray-700 dark:text-zinc-300">{{ t("quickMetrics.hostMetrics.memory") }}</dt>
+          <dd class="text-gray-900 dark:text-white">{{ displayMemFormatted }}</dd>
+        </div>
+        <div class="flex items-center justify-between rounded-lg px-3 py-2">
+          <dt class="text-gray-700 dark:text-zinc-300">{{ t("quickMetrics.hostMetrics.dockerVol") }}</dt>
+          <dd class="text-gray-900 dark:text-white">{{ storageInfo.total > 0 ? `${storageInfo.usedFormatted} / ${storageInfo.totalFormatted} (${displayStoragePercent}%)` : storageInfo.usedFormatted }}</dd>
+        </div>
+      </dl>
+
+      <div class="mt-4 text-[10px] font-medium text-gray-500 dark:text-zinc-400">
+        <span>{{ t("home.overviewPulseCard.active") }} · {{ t("home.overviewPulseCard.healthy") }}</span>
       </div>
     </div>
   </div>

@@ -29,14 +29,14 @@ const emit = defineEmits(["select"]);
       @keydown.space.prevent="emit('select', container)"
       role="button"
       tabindex="0"
-      class="group relative h-full flex flex-col bg-[var(--surface)] rounded-xl overflow-hidden transition-all duration-300 smooth-shadow hover:smooth-shadow-lg hover:-translate-y-0.5 cursor-pointer animate-fadeIn focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+      class="group relative h-full flex flex-col bg-white dark:bg-[#0A0A0A] rounded-xl overflow-hidden transition-all duration-300 smooth-shadow hover:smooth-shadow-lg hover:-translate-y-0.5 cursor-pointer animate-fadeIn focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
     >
 
       <div class="relative z-10 flex flex-col h-full p-5">
         <div class="flex items-start gap-4 mb-4">
           <!-- Icon -->
           <div class="relative shrink-0">
-             <div class="w-10 h-10 rounded-lg bg-[var(--surface-muted)] flex items-center justify-center group-hover:scale-105 transition-all duration-300">
+             <div class="w-10 h-10 rounded-lg bg-gray-50 dark:bg-zinc-900 flex items-center justify-center group-hover:scale-105 transition-all duration-300">
                 <Box class="w-5 h-5 text-[var(--text-secondary)] group-hover:text-blue-500 transition-colors" />
              </div>
              

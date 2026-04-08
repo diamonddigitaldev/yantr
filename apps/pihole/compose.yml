@@ -6,9 +6,10 @@ services:
     labels:
       yantr.app: "pihole"
       yantr.service: "DNS Sinkhole"
+    # Use container-only port format so multiple instances can run on the host
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
+      - "53/tcp"
+      - "53/udp"
       - "80"
     environment:
       WEBPASSWORD: ${WEBPASSWORD:-yantr}

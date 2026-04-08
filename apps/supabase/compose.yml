@@ -22,8 +22,9 @@ services:
       yantr.service: "Web UI"
     depends_on:
       - supabase-db
+    # Prefer container-only port format so host port is not fixed
     ports:
-      - "54321:3000"
+      - "3000"
     environment:
       SUPABASE_DB_HOST: "supabase-db"
       SUPABASE_DB_USER: "postgres"

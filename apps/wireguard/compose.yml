@@ -5,9 +5,10 @@ services:
     hostname: wireguard
     volumes:
       - wireguard_data:/etc/wireguard
+    # Use container-only port format so multiple instances can run on the host
     ports:
-      - "51820:51820/udp"
-      - "51821:51821"
+      - "51820/udp"
+      - "51821"
     restart: unless-stopped
     cap_add:
       - NET_ADMIN

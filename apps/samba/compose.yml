@@ -6,8 +6,9 @@ services:
       NAME: ${SAMBA_NAME:-Data}
       USER: ${SAMBA_USER:-admin}
       PASS: ${SAMBA_PASS:-admin}
+    # Use container-only port format so host port is not fixed
     ports:
-      - "445:445"
+      - "445"
     volumes:
       - samba-storage:/storage
     restart: unless-stopped

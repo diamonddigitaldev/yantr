@@ -806,8 +806,8 @@
     "label": "Sponsor",
     "perksIncluded": "Perks included",
     "title": "Fund Yantr. Keep it free forever.",
-    "description": "Not just a good feeling — sponsoring gets you direct access and influence over Yantr's direction.",
-    "cta": "Become a Sponsor",
+    "description": "Support Yantr on GitHub Sponsors — keeps the project free and gives you direct influence over its direction.",
+    "cta": "Sponsor on GitHub",
     "benefits": {
       "devAccess": {
         "title": "Direct Dev Access",

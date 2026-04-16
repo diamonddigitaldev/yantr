@@ -764,8 +764,8 @@
     "label": "赞助",
     "perksIncluded": "含专属权益",
     "title": "资助 Yantr，让它永久免费。",
-    "description": "不只是一种好感 — 赞助让您直接参与并影响 Yantr 的发展方向。",
-    "cta": "成为赞助者",
+    "description": "通过 GitHub Sponsors 支持 Yantr — 保持项目免费，并直接影响其发展方向。",
+    "cta": "在 GitHub 上赞助",
     "benefits": {
       "devAccess": {
         "title": "直接开发者通道",

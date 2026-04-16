@@ -764,8 +764,8 @@
     "label": "Sponsor",
     "perksIncluded": "Vorteile inklusive",
     "title": "Yantr finanzieren. Für immer kostenlos.",
-    "description": "Nicht nur ein gutes Gefühl — als Sponsor erhältst du direkten Zugang und Einfluss auf Yantr's Richtung.",
-    "cta": "Sponsor werden",
+    "description": "Unterstütze Yantr über GitHub Sponsors — halte das Projekt kostenlos und beeinflusse direkt seine Richtung.",
+    "cta": "Auf GitHub sponsern",
     "benefits": {
       "devAccess": {
         "title": "Direkter Entwicklerzugang",

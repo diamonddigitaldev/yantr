@@ -764,8 +764,8 @@
     "label": "スポンサー",
     "perksIncluded": "特典あり",
     "title": "Yantr を支援して、永遠に無料で。",
-    "description": "良い気分だけじゃない — スポンサーになると、Yantrの方向性への直接アクセスと影響力が得られます。",
-    "cta": "スポンサーになる",
+    "description": "GitHub Sponsors で Yantr を支援 — プロジェクトを無料に保ち、その方向性に直接影響を与えましょう。",
+    "cta": "GitHub でスポンサーになる",
     "benefits": {
       "devAccess": {
         "title": "開発者への直接アクセス",

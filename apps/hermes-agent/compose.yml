@@ -1,6 +1,6 @@
 services:
   web:
-    image: ghcr.io/getumbrel/hermes-agent-umbrel:latest
+    image: ghcr.io/getumbrel/hermes-agent-umbrel:v2026.4.13
     container_name: hermes-agent
     hostname: hermes
     init: true

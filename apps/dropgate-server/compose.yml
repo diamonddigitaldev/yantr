@@ -1,6 +1,7 @@
 services:
   dropgate-server:
     image: willtda/dropgate-server:latest
+    pull_policy: always
     container_name: dropgate-server
     labels:
       yantr.app: "dropgate-server"

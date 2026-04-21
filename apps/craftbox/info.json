@@ -1,0 +1,40 @@
+{
+  "name": "Craftbox",
+  "logo": "bafkreigoofakv37dcp75c6zrdtmx5o5wduwv6qthbrbupzhjci2ljqwfwy",
+  "tags": [
+    "gaming",
+    "server",
+    "minecraft",
+    "panel",
+    "admin",
+    "tools"
+  ],
+  "short_description": "A modern self-hosted platform for managing Minecraft servers with built-in mod support.",
+  "description": "Craftbox is a self-hosted web panel for creating, configuring, monitoring, and managing Minecraft servers — no command-line expertise or dodgy download pages required.",
+  "usecases": [
+    "Run and manage multiple Minecraft servers from a single panel, each with its own console, watchdog, and configuration.",
+    "Choose from Vanilla, Paper, Purpur, Folia, Fabric, Forge, NeoForge, and custom JAR uploads.",
+    "One-click manual backups, scheduled backups with retention policies, and one-click restore.",
+    "Upload and manage JAR files for plugins (Paper/Purpur/Folia) and mods (Fabric/Forge/NeoForge).",
+    "Keep yourself and players informed with public status pages, live player tracking, resource monitoring, and event history."
+  ],
+  "website": "https://diamonddigital.dev/projects/craftbox",
+  "dependencies": [],
+  "ports": [
+    {
+      "port": 6464,
+      "protocol": "HTTP",
+      "label": "Web UI"
+    },
+    {
+      "port": "25500-25600",
+      "protocol": "TCP",
+      "label": "Minecraft Java Server"
+    },
+    {
+      "port": "25500-25600",
+      "protocol": "UDP",
+      "label": "Plugins/Mods"
+    }
+  ]
+}

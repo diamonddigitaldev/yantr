@@ -7,7 +7,7 @@ services:
       yantr.app: "craftbox"
       yantr.service: "Game Server"
     ports:
-      - "6464:6464"
+      - "6464"
       - "25500-25600:25500-25600/tcp"
       - "25500-25600:25500-25600/udp"
     environment:

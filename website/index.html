@@ -192,19 +192,6 @@
           transform: translateY(0) scale(1);
         }
       }
-      @keyframes remotePanelSwap {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .remote-panel-swap {
-        animation: remotePanelSwap 220ms ease-out;
-      }
       @keyframes pulseGlow {
         0%,
         100% {
@@ -1204,150 +1191,95 @@
         </div>
       </section>
 
-      <!-- Remote Access Section (redesigned to match "Unlimited Linux Boxes" style) -->
-      <section id="remote-access" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-t border-gray-100 bg-white py-16 sm:py-20">
+      <!-- Remote Access Section -->
+      <section id="remote-access" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-t border-gray-100 bg-white py-20 sm:py-28">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
-          <div class="text-center mb-10">
-            <p class="text-[11px] uppercase tracking-[0.2em] text-gray-500 mb-2">Remote Access</p>
-            <h2 class="text-3xl sm:text-4xl font-bold font-sans tracking-tight text-gray-900 mb-2">Make self-hosting reachable without making it fragile.</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto text-base leading-relaxed">The hard part is not running the app — it’s reaching it safely from outside your home network. Yantr bundles the three pieces most homelabs miss: private access, public ingress, and an auth layer in front of everything.</p>
+          <div class="max-w-3xl mb-14">
+            <p class="text-[11px] uppercase tracking-[0.22em] text-gray-500 mb-3">Remote Access</p>
+            <h2 class="text-3xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900 leading-[1.1]">
+              Reachable from anywhere.<br />
+              <span class="text-gray-400">Fragile from nowhere.</span>
+            </h2>
+            <p class="mt-5 text-base sm:text-lg text-gray-600 leading-relaxed">
+              The hard part of self-hosting isn't running the app — it's reaching it safely. Yantr ships the three pieces most homelabs stitch together by hand: a private mesh, a public tunnel, and one auth edge in front of everything.
+            </p>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-gray-100 bg-white px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">🔒</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-gray-900">Tailscale</h3>
-              <p class="text-sm text-gray-500 mt-2">Private access — reach your apps from your own devices without exposing them publicly.</p>
-            </article>
-
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-gray-100 bg-white px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">☁️</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-gray-900">Cloudflare Tunnel</h3>
-              <p class="text-sm text-gray-500 mt-2">Public ingress — publish a service securely without opening ports or renting a VPS.</p>
-            </article>
-
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-gray-100 bg-white px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">🛡️</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-gray-900">Caddy Auth Proxy</h3>
-              <p class="text-sm text-gray-500 mt-2">Protection layer — put a login wall and HTTPS in front of apps never designed for the open internet.</p>
-            </article>
-
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">📊</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-emerald-700">Quick facts</h3>
-              <div class="mt-2 text-sm text-emerald-700">
-                <div class="flex items-baseline gap-3"><p class="text-2xl font-bold">3</p><p class="text-sm text-emerald-700">tools, one access story</p></div>
-                <div class="flex items-baseline gap-3 mt-2"><p class="text-2xl font-bold">0</p><p class="text-sm text-emerald-700">private-access ports exposed</p></div>
-                <div class="flex items-baseline gap-3 mt-2"><p class="text-2xl font-bold">1</p><p class="text-sm text-emerald-700">shared auth edge</p></div>
-              </div>
-            </article>
-          </div>
-
-          <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <article class="rounded-2xl border border-gray-200 bg-white px-5 py-5">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">What this replaces</p>
-              <div class="flex flex-wrap gap-2">
-                <span class="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-600">Port forwarding</span>
-                <span class="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-600">Dynamic DNS</span>
-                <span class="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-600">Reverse proxy babysitting</span>
-                <span class="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-600">Manual SSL renewals</span>
-                <span class="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm text-gray-600">One-off VPN servers</span>
-              </div>
-            </article>
-
-            <article id="remote-access-panel" class="rounded-2xl border border-gray-200 bg-white px-5 py-5">
-              <p id="remote-panel-kicker" class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-2">Private access</p>
-              <h3 id="remote-panel-title" class="text-lg font-bold text-gray-900">Reach your homelab like it lives on your own LAN.</h3>
-              <span id="remote-panel-badge" class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-white mt-3">Tailscale</span>
-              <p id="remote-panel-summary" class="sr-only">Instead of exposing services publicly, create a private encrypted network between your laptop, phone, and server. The service stays private, but still feels local.</p>
-
-              <div class="mt-3 rounded-2xl border border-gray-200 bg-white p-4">
-                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400 mb-2">Private access</p>
-                <ul id="remote-panel-compact-list" class="text-sm text-gray-600 space-y-2"></ul>
-              </div>
-
-              <div class="mt-4">
-                <div class="flex justify-end">
-                  <button id="remote-panel-toggle" class="text-sm text-gray-500 hover:underline">More</button>
-                </div>
-
-                <div id="remote-panel-compact" class="mt-3 text-sm text-gray-600 hidden">
-                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400 mb-1">Without it</p>
-                  <p id="remote-panel-compact-before" class="leading-snug"></p>
-
-                  <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400 mb-1 mt-3">With Yantr</p>
-                  <p id="remote-panel-compact-after" class="leading-snug inline-block bg-gray-900/5 px-2 py-1 rounded text-gray-900"></p>
-                </div>
-
-                <div id="remote-panel-details" class="mt-4 grid grid-cols-1 gap-3 hidden">
-                  <div class="rounded-2xl border border-gray-200 bg-white p-4">
-                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400 mb-2">Without it</p>
-                    <ul id="remote-panel-before" class="text-sm text-gray-600 space-y-2"></ul>
-                  </div>
-                  <div class="rounded-2xl border border-gray-900 bg-gray-900 p-4 text-white">
-                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-gray-400 mb-2">With Yantr</p>
-                    <ul id="remote-panel-after" class="text-sm text-gray-100 space-y-2"></ul>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <article class="rounded-2xl border border-gray-200 bg-white px-5 py-5">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Why it matters</p>
-              <ul id="remote-panel-importance" class="text-sm text-gray-600 space-y-2"></ul>
-            </article>
-
-            <article class="rounded-2xl border border-gray-200 bg-white px-5 py-5">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-3">Best for</p>
-              <ul id="remote-panel-bestfor" class="text-sm text-gray-600 space-y-2"></ul>
-            </article>
-          </div>
-
-          <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="group rounded-3xl border border-gray-200 bg-white p-6 transition-all duration-500 hover:-translate-y-1 hover:border-gray-300 hover:shadow-[0_24px_70px_-50px_rgba(15,23,42,0.22)]">
-              <div class="flex items-center gap-3 mb-4">
-                <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-black text-white">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-200 rounded-2xl overflow-hidden smooth-shadow">
+            <!-- Tailscale -->
+            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
+              <div class="flex items-center justify-between mb-6">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.2"/><circle cx="12" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="18" cy="12" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="12" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/></svg>
                 </span>
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">Outcome</p>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">01 · Private</span>
               </div>
-              <p class="text-sm font-semibold text-gray-900">You stop treating remote access like ad-hoc infrastructure work.</p>
-              <p class="text-sm text-gray-600 mt-2">It becomes part of the product: installed, understandable, and safe by default.</p>
+              <h3 class="text-xl font-bold font-sans text-gray-900">Tailscale mesh</h3>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                A private encrypted network between your devices and your server. Apps stay invisible to the public internet but feel local on your laptop and phone.
+              </p>
+              <p class="mt-6 text-[11px] uppercase tracking-[0.18em] text-gray-400 font-semibold">Replaces</p>
+              <p class="mt-1 text-sm text-gray-700">VPN servers · port forwarding · dynamic DNS</p>
+            </article>
+
+            <!-- Cloudflare Tunnel -->
+            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
+              <div class="flex items-center justify-between mb-6">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.78 6 6 0 0 0-11.6 2.28A4 4 0 0 0 5 19h12.5z"/></svg>
+                </span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">02 · Public</span>
+              </div>
+              <h3 class="text-xl font-bold font-sans text-gray-900">Cloudflare Tunnel</h3>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                Outbound-only tunnel that publishes a single service to the open internet — with TLS, DDoS protection, and CGNAT support — without opening one router port.
+              </p>
+              <p class="mt-6 text-[11px] uppercase tracking-[0.18em] text-gray-400 font-semibold">Replaces</p>
+              <p class="mt-1 text-sm text-gray-700">Reverse proxy babysitting · cert renewals · a rented VPS</p>
+            </article>
+
+            <!-- Caddy Auth -->
+            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
+              <div class="flex items-center justify-between mb-6">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">03 · Protected</span>
+              </div>
+              <h3 class="text-xl font-bold font-sans text-gray-900">Caddy auth edge</h3>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">
+                One login wall and HTTPS layer in front of every app — including the ones that were never designed to face the open internet.
+              </p>
+              <p class="mt-6 text-[11px] uppercase tracking-[0.18em] text-gray-400 font-semibold">Replaces</p>
+              <p class="mt-1 text-sm text-gray-700">Per-app auth glue · weak built-in logins · scattered SSL setup</p>
+            </article>
+          </div>
+
+          <!-- Outcome row -->
+          <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
+            <div>
+              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">0</p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">router ports opened for private access</p>
             </div>
-
-            <div class="group rounded-3xl border border-emerald-200 bg-emerald-50 p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_70px_-50px_rgba(15,23,42,0.22)]">
-              <div class="flex items-center gap-3 mb-4">
-                <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-200 bg-white text-emerald-700">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7 7h10M7 17h6" /></svg>
-                </span>
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Private by default</p>
-              </div>
-              <p class="text-2xl font-bold text-gray-900">0</p>
-              <p class="text-sm text-gray-700 mt-1">ports you need to expose for private access</p>
+            <div>
+              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">1</p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">place to enforce auth and TLS for every app</p>
             </div>
-
-            <div class="group rounded-3xl border border-blue-200 bg-blue-50 p-6 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_70px_-50px_rgba(15,23,42,0.22)]">
-              <div class="flex items-center gap-3 mb-4">
-                <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-blue-200 bg-white text-blue-700">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h10" /></svg>
-                </span>
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">Operationally simple</p>
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <p class="text-2xl font-bold text-gray-900">1</p>
-                  <p class="text-sm text-gray-700 mt-1">place to enforce auth and HTTPS</p>
-                </div>
-                <div>
-                  <p class="text-2xl font-bold text-gray-900">3</p>
-                  <p class="text-sm text-gray-700 mt-1">tools covering the full remote-access stack</p>
-                </div>
-              </div>
+            <div>
+              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">3</p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">tools, installed and wired together by Yantr</p>
             </div>
           </div>
 
-          <div class="mt-8 text-center">
-            <a href="#apps" class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-100 transition">Learn more — Remote access</a>
+          <div class="mt-12 flex flex-wrap items-center gap-3">
+            <a href="#apps" class="inline-flex items-center gap-2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-black transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              Browse apps
+            </a>
+            <a href="#faq" class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+              How it fits together
+            </a>
           </div>
         </div>
       </section>
@@ -1701,188 +1633,7 @@
         loadRandomScreenshot();
         initHeroAnimation();
         initArchDiagram();
-        initRemoteAccessSection();
       });
-
-      function initRemoteAccessSection() {
-        const root = document.getElementById("remote-access");
-        if (!root) return;
-
-        const scenarios = {
-          tailscale: {
-            kicker: "Private access",
-            title: "Reach your homelab like it’s on your LAN.",
-            badge: "Tailscale",
-            summary: "Private, LAN-like access with no router changes.",
-            before: [
-              "Run a VPN or expose SSH publicly",
-              "NAT/CGNAT and mobile network restrictions",
-              "Keep track of IPs and port forwards",
-            ],
-            after: [
-              "Per-device secure access, no router changes",
-              "MagicDNS — services feel local",
-              "Admin panels remain private by default",
-            ],
-            importance: [
-              "Keeps apps off the public internet",
-              "Reduces per-app hardening overhead",
-              "Remote control without perimeter complexity",
-            ],
-            bestFor: ["Admin dashboards", "SSH & file access", "Private services"],
-          },
-          cloudflared: {
-            kicker: "Public access",
-            title: "Publish one service without touching your router.",
-            badge: "Cloudflare Tunnel",
-            summary: "Tunnel outbound to Cloudflare for a safe, public entry point.",
-            before: [
-              "Open router ports and maintain DNS/certs",
-              "Manage reverse proxy and renewal jobs",
-              "Rent a small VPS to forward traffic",
-            ],
-            after: [
-              "No inbound ports required",
-              "Automatic TLS and edge protection",
-              "Works around CGNAT and changing IPs",
-            ],
-            importance: [
-              "Makes sharing reliable",
-              "Removes inbound networking as a failure point",
-              "Publish selectively, not your whole homelab",
-            ],
-            bestFor: ["Public sites", "Webhook endpoints", "Client-facing services"],
-          },
-          caddy: {
-            kicker: "Protection layer",
-            title: "Add HTTPS and a login wall to LAN-first apps.",
-            badge: "Caddy Auth",
-            summary: "One TLS+auth front door for apps that assume a trusted network.",
-            before: [
-              "Expose apps with weak or no auth",
-              "Manage per-app configs and certs",
-              "Repeat security setup for every service",
-            ],
-            after: [
-              "Central auth + TLS for many services",
-              "Automatic certificate management",
-              "Reduce public risk from weak apps",
-            ],
-            importance: [
-              "Standardize access, don’t trust every app",
-              "Improve security ergonomics",
-              "Turns 'reachable' into 'safe enough'",
-            ],
-            bestFor: ["Apps with weak auth", "Single-domain routing", "Consistent HTTPS"],
-          },
-        };
-
-        const buttons = Array.from(root.querySelectorAll("[data-remote-scenario]"));
-        const panel = document.getElementById("remote-access-panel");
-        const kicker = document.getElementById("remote-panel-kicker");
-        const title = document.getElementById("remote-panel-title");
-        const badge = document.getElementById("remote-panel-badge");
-        const summary = document.getElementById("remote-panel-summary");
-        const before = document.getElementById("remote-panel-before");
-        const after = document.getElementById("remote-panel-after");
-        const importance = document.getElementById("remote-panel-importance");
-        const bestFor = document.getElementById("remote-panel-bestfor");
-
-        function renderList(items, dark = false, compact = false) {
-          return items
-            .map(
-              (item) => `
-          <li class="flex items-start gap-3">
-            <span class="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full ${dark ? "bg-white/10 text-white" : "bg-gray-100 text-gray-700"} text-[11px] font-bold shrink-0">${compact ? "•" : "✓"}</span>
-            <span>${item}</span>
-          </li>
-        `,
-            )
-            .join("");
-        }
-
-        function setActive(id) {
-          const scenario = scenarios[id];
-          if (!scenario) return;
-
-          buttons.forEach((button) => {
-            const isActive = button.dataset.remoteScenario === id;
-            button.setAttribute("aria-pressed", String(isActive));
-            button.classList.toggle("border-gray-900", isActive);
-            button.classList.toggle("bg-gray-50", isActive);
-            button.classList.toggle("shadow-lg", isActive);
-            button.classList.toggle("shadow-gray-900/10", isActive);
-            button.classList.toggle("-translate-y-0.5", isActive);
-            button.classList.toggle("border-gray-200", !isActive);
-            button.classList.toggle("bg-white", !isActive);
-
-            const icon = button.querySelector("span.inline-flex");
-            const eyebrow = button.querySelector("p.text-xs");
-            const heading = button.querySelector("p.text-base");
-            const desc = button.querySelector("p.text-sm");
-            if (icon) {
-              icon.classList.toggle("bg-gray-900", isActive);
-              icon.classList.toggle("text-white", isActive);
-              icon.classList.toggle("bg-gray-100", !isActive);
-              icon.classList.toggle("text-gray-700", !isActive);
-            }
-            if (eyebrow) eyebrow.classList.toggle("text-gray-400", !isActive);
-            if (eyebrow) eyebrow.classList.toggle("text-gray-500", isActive);
-            if (heading) heading.classList.toggle("text-gray-900", true);
-            if (heading) heading.classList.remove("text-white");
-            if (desc) desc.classList.toggle("text-gray-500", !isActive);
-            if (desc) desc.classList.toggle("text-gray-600", isActive);
-            if (desc) desc.classList.remove("text-gray-300");
-          });
-
-          panel.classList.remove("remote-panel-swap");
-          void panel.offsetWidth;
-          panel.classList.add("remote-panel-swap");
-
-          kicker.textContent = scenario.kicker;
-          title.textContent = scenario.title;
-          badge.textContent = scenario.badge;
-          summary.textContent = scenario.summary;
-          before.innerHTML = renderList(scenario.before);
-          after.innerHTML = renderList(scenario.after, true);
-          importance.innerHTML = renderList(scenario.importance);
-          bestFor.innerHTML = renderList(scenario.bestFor, false, true);
-
-          // compact summaries (single-line) for reduced height
-          const compactBefore = document.getElementById("remote-panel-compact-before");
-          const compactAfter = document.getElementById("remote-panel-compact-after");
-          if (compactBefore) compactBefore.textContent = scenario.before.join(' · ');
-          if (compactAfter) compactAfter.textContent = scenario.after.join(' · ');
-          const compactList = document.getElementById("remote-panel-compact-list");
-          if (compactList) compactList.innerHTML = renderList(scenario.after, false, false);
-        }
-
-        buttons.forEach((button) => {
-          button.addEventListener("click", () => setActive(button.dataset.remoteScenario));
-        });
-
-        setActive("tailscale");
-        // toggle compact/details view to reduce vertical footprint
-        (function setupPanelToggle() {
-          const toggle = document.getElementById('remote-panel-toggle');
-          const compact = document.getElementById('remote-panel-compact');
-          const details = document.getElementById('remote-panel-details');
-          if (!toggle || !compact || !details) return;
-          let expanded = false;
-          toggle.addEventListener('click', () => {
-            expanded = !expanded;
-            if (expanded) {
-              compact.classList.add('hidden');
-              details.classList.remove('hidden');
-              toggle.textContent = 'Less';
-            } else {
-              compact.classList.remove('hidden');
-              details.classList.add('hidden');
-              toggle.textContent = 'More';
-            }
-          });
-        })();
-      }
 
       // ── Interactive Architecture Diagram ──────────────────────────
       function initArchDiagram() {

@@ -1057,136 +1057,140 @@
       </section>
 
       <!-- System Requirements Section -->
-      <section id="requirements" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 py-16 sm:py-24 border-t border-gray-100 bg-white overflow-hidden">
-        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
-          <div class="grid grid-cols-1 xl:grid-cols-[1.05fr_0.95fr] gap-8 xl:gap-16 items-end mb-12 sm:mb-16">
+      <section id="requirements" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-t border-gray-100 bg-white py-20 sm:py-28">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+          <div class="max-w-3xl mb-14">
+            <p class="text-[11px] uppercase tracking-[0.22em] text-gray-500 mb-3">System Requirements</p>
+            <h2 class="text-3xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900 leading-[1.1]">
+              Runs on the box you already own.<br />
+              <span class="text-gray-400">Scales when you outgrow it.</span>
+            </h2>
+            <p class="mt-5 text-base sm:text-lg text-gray-600 leading-relaxed">
+              Yantr is a small Node.js daemon talking to Docker — no Kubernetes, no agent fleet, no rewritten OS. If Docker runs on your hardware, Yantr does too.
+            </p>
+          </div>
+
+          <!-- Headline stats -->
+          <div class="grid grid-cols-3 gap-6 sm:gap-10 mb-14">
             <div>
-              <p class="text-[11px] uppercase tracking-[0.2em] text-gray-500 mb-3">System Requirements</p>
-              <h2 class="text-3xl sm:text-5xl lg:text-6xl font-bold font-sans tracking-tight text-gray-900 max-w-4xl">
-                Yantr is lightweight enough to run almost anywhere Docker can run.
-              </h2>
+              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">500<span class="text-2xl sm:text-3xl text-gray-400 font-semibold ml-1">MB</span></p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">RAM to start</p>
             </div>
             <div>
-              <p class="text-base sm:text-lg text-gray-600 leading-relaxed font-sans max-w-2xl">
-                You do not need a dedicated server rack or expensive hardware. Yantr is designed to run on modest machines, while still scaling up cleanly when
-                you want to host more apps or heavier workloads.
-              </p>
-              <div class="mt-6 flex flex-wrap gap-6 text-sm text-gray-500">
-                <div>
-                  <p class="text-2xl font-bold tracking-tight text-gray-900">500 MB</p>
-                  <p>minimum RAM</p>
-                </div>
-                <div>
-                  <p class="text-2xl font-bold tracking-tight text-gray-900">1</p>
-                  <p>CPU core to start</p>
-                </div>
-                <div>
-                  <p class="text-2xl font-bold tracking-tight text-gray-900">20.10+</p>
-                  <p>Docker Engine</p>
-                </div>
-              </div>
+              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">1<span class="text-2xl sm:text-3xl text-gray-400 font-semibold ml-1">core</span></p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">x86_64 or ARM64</p>
+            </div>
+            <div>
+              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">20.10<span class="text-2xl sm:text-3xl text-gray-400 font-semibold ml-1">+</span></p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">Docker Engine</p>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.1fr)_360px] gap-8 xl:gap-12 items-start">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.16)]">
-                <div class="flex items-center justify-between gap-4 mb-8">
-                  <div class="flex items-center gap-4">
-                    <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 shrink-0">
-                      <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 12h14M12 5v14" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-2">Start here</p>
-                      <h3 class="text-2xl font-bold tracking-tight text-gray-900">Minimum</h3>
-                    </div>
-                  </div>
-                  <span
-                    class="inline-flex items-center rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-gray-600"
-                    >Gets Yantr running</span
-                  >
-                </div>
-
-                <div class="space-y-4 text-sm text-gray-600">
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">OS</span>
-                    <span>Linux, macOS, or Windows with WSL2</span>
-                  </div>
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">CPU</span>
-                    <span>1 core on x86_64 or ARM64</span>
-                  </div>
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">RAM</span>
-                    <span>500 MB</span>
-                  </div>
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">Software</span>
-                    <span>Docker Engine 20.10+</span>
-                  </div>
-                </div>
+          <!-- Minimum vs Recommended grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-200 rounded-2xl overflow-hidden smooth-shadow">
+            <!-- Minimum -->
+            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
+              <div class="flex items-center justify-between mb-6">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                </span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">Minimum · Gets it running</span>
               </div>
+              <h3 class="text-xl font-bold font-sans text-gray-900">Just enough</h3>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">A spare laptop, a Raspberry Pi 4, an old NUC, or a $5 VPS. Plenty for a dashboard and a handful of small apps.</p>
 
-              <div class="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.16)]">
-                <div class="flex items-center justify-between gap-4 mb-8">
-                  <div class="flex items-center gap-4">
-                    <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 shrink-0">
-                      <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 15l4-4 4 4 8-8" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-2">Best experience</p>
-                      <h3 class="text-2xl font-bold tracking-tight text-gray-900">Recommended</h3>
-                    </div>
-                  </div>
-                  <span
-                    class="inline-flex items-center rounded-full border border-gray-200 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] text-gray-600"
-                    >Comfortable headroom</span
-                  >
+              <dl class="mt-7 divide-y divide-gray-100 text-sm">
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">OS</dt>
+                  <dd class="text-gray-900 font-medium text-right">Linux, macOS, or WSL2</dd>
                 </div>
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">CPU</dt>
+                  <dd class="text-gray-900 font-medium text-right">1 core · x86_64 or ARM64</dd>
+                </div>
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">RAM</dt>
+                  <dd class="text-gray-900 font-medium text-right">500 MB</dd>
+                </div>
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">Software</dt>
+                  <dd class="text-gray-900 font-medium text-right">Docker Engine 20.10+</dd>
+                </div>
+              </dl>
+            </article>
 
-                <div class="space-y-4 text-sm text-gray-600">
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">OS</span>
-                    <span>Ubuntu 22.04+ or Debian 12+</span>
-                  </div>
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">CPU</span>
-                    <span>4+ cores</span>
-                  </div>
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">RAM</span>
-                    <span>2 GB</span>
-                  </div>
-                  <div class="flex items-start gap-4 rounded-2xl border border-gray-200 p-4">
-                    <span class="font-semibold text-gray-900 w-20 shrink-0">Storage</span>
-                    <span>SSD or NVMe</span>
-                  </div>
-                </div>
+            <!-- Recommended -->
+            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
+              <div class="flex items-center justify-between mb-6">
+                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+                </span>
+                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">Recommended · Comfortable</span>
               </div>
+              <h3 class="text-xl font-bold font-sans text-gray-900">Daily-driver homelab</h3>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">Runs media, AI, sync, and dev workloads side by side without thinking about it. The sweet spot for most users.</p>
+
+              <dl class="mt-7 divide-y divide-gray-100 text-sm">
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">OS</dt>
+                  <dd class="text-gray-900 font-medium text-right">Ubuntu 22.04+ or Debian 12+</dd>
+                </div>
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">CPU</dt>
+                  <dd class="text-gray-900 font-medium text-right">4+ cores</dd>
+                </div>
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">RAM</dt>
+                  <dd class="text-gray-900 font-medium text-right">2 GB or more</dd>
+                </div>
+                <div class="flex items-baseline justify-between py-3">
+                  <dt class="text-gray-500">Storage</dt>
+                  <dd class="text-gray-900 font-medium text-right">SSD or NVMe</dd>
+                </div>
+              </dl>
+            </article>
+          </div>
+
+          <!-- Tested-on row -->
+          <div class="mt-14">
+            <p class="text-[11px] uppercase tracking-[0.22em] text-gray-500 font-semibold mb-5">Known to run on</p>
+            <div class="flex flex-wrap gap-x-8 gap-y-3 text-sm text-gray-700">
+              <span class="inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                Raspberry Pi 4 / 5
+              </span>
+              <span class="inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                Intel NUC &amp; mini PCs
+              </span>
+              <span class="inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                Old laptops &amp; desktops
+              </span>
+              <span class="inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                Hetzner / Contabo / Oracle VPS
+              </span>
+              <span class="inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                Synology &amp; QNAP NAS
+              </span>
+              <span class="inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                Proxmox VMs &amp; LXC
+              </span>
             </div>
+          </div>
 
-            <div class="space-y-6 xl:sticky xl:top-24">
-              <div class="rounded-3xl border border-gray-200 bg-white p-6 sm:p-8 shadow-[0_20px_60px_-45px_rgba(15,23,42,0.16)]">
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-4">What this means</p>
-                <p class="text-lg font-bold tracking-tight text-gray-900">You can start on the hardware you already own.</p>
-                <p class="mt-3 text-sm text-gray-600 leading-relaxed">
-                  Yantr does not demand a dedicated appliance. A spare mini PC, an old workstation, or a modest VPS is enough to get going.
-                </p>
-              </div>
-
-              <div class="rounded-3xl border border-gray-200 bg-gray-900 p-6 sm:p-8 text-white shadow-[0_20px_60px_-45px_rgba(15,23,42,0.36)]">
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 mb-4">Why this matters</p>
-                <p class="text-lg font-bold tracking-tight">The barrier to self-hosting should be curiosity, not hardware budget.</p>
-                <p class="mt-3 text-sm text-gray-300 leading-relaxed">
-                  Low requirements mean you can experiment early, scale later, and avoid the usual trap of overbuilding before you even know what apps you want
-                  to run.
-                </p>
-              </div>
-            </div>
+          <div class="mt-12 flex flex-wrap items-center gap-3">
+            <a href="./install-docker/" class="inline-flex items-center gap-2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-black transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Install Docker
+            </a>
+            <a href="#install" class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              Install Yantr
+            </a>
           </div>
         </div>
       </section>
